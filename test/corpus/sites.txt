@@ -45,7 +45,6 @@ example.com
 
 root * /var/www
 
-
 ---
 
 (source_file

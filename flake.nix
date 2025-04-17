@@ -53,7 +53,6 @@
             "LICENSE"
             "**/node_modules"
             "**/package-lock.json"
-            "src/**"
           ];
 
           programs = {
@@ -63,6 +62,9 @@
             # Enable alejandra, a Nix formatter.
             alejandra.enable = true;
 
+            # Enable clang-format, a formatter for C code.
+            clang-format.enable = true;
+
             # Enable deadnix, a Nix linter/formatter that removes un-used Nix code.
             deadnix.enable = true;
 
@@ -70,9 +72,11 @@
             prettier = {
               enable = true;
               includes = [
-                "grammar.js"
-                "package.json"
+                "*.js"
+                "*.mjs"
+                "*.json"
                 "*.md"
+                "*.ts"
               ];
             };
 

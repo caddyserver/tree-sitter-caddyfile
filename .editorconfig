@@ -1,50 +1,24 @@
 root = true
 
 [*]
+indent_style = tab
+indent_size = 4
+tab_width = 4
+end_of_line = lf
 charset = utf-8
-
-[*.{json,toml,yml,gyp}]
-indent_style = space
-indent_size = 2
-
-[*.js]
-indent_style = space
-indent_size = 2
-
-[*.scm]
-indent_style = space
-indent_size = 2
-
-[*.{c,cc,h}]
-indent_style = space
-indent_size = 4
-
-[*.rs]
-indent_style = space
-indent_size = 4
-
-[*.{py,pyi}]
-indent_style = space
-indent_size = 4
-
-[*.swift]
-indent_style = space
-indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
 
 [*.go]
-indent_style = tab
-indent_size = 4
+max_line_length = 100
 
-[*.txt]
-indent_style = tab
-indent_size = 4
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{md,scm,nix,yaml}]
+indent_style = space
+indent_size = 2
+tab_width = 2
 
 [Makefile]
-indent_style = tab
 indent_size = 8
-
-[parser.c]
-indent_size = 2
-
-[{alloc,array,parser}.h]
-indent_size = 2
