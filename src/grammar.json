@@ -263,19 +263,6 @@
       "name": "_placeholder"
     },
     "_placeholder": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "__placeholder"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_environment_variable"
-        }
-      ]
-    },
-    "__placeholder": {
       "type": "SEQ",
       "members": [
         {
@@ -307,6 +294,10 @@
         }
       ]
     },
+    "environment_variable": {
+      "type": "SYMBOL",
+      "name": "_environment_variable"
+    },
     "_environment_variable": {
       "type": "TOKEN",
       "content": {
@@ -322,6 +313,27 @@
               "type": "PATTERN",
               "value": "[a-zA-Z0-9][a-zA-Z0-9_.\\[\\]]*"
             }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ":"
+                  },
+                  {
+                    "type": "PATTERN",
+                    "value": "[^}\\n\\r]+"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "STRING",
@@ -373,6 +385,10 @@
               {
                 "type": "SYMBOL",
                 "name": "unix_socket"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "environment_variable"
               },
               {
                 "type": "SYMBOL",
@@ -454,6 +470,10 @@
               {
                 "type": "SYMBOL",
                 "name": "unix_socket"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "environment_variable"
               },
               {
                 "type": "SYMBOL",

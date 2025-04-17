@@ -46,6 +46,10 @@
           "named": true
         },
         {
+          "type": "environment_variable",
+          "named": true
+        },
+        {
           "type": "int_literal",
           "named": true
         },
@@ -79,6 +83,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "environment_variable",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "global_options",
@@ -150,6 +159,10 @@
         },
         {
           "type": "block",
+          "named": true
+        },
+        {
+          "type": "environment_variable",
           "named": true
         },
         {

@@ -1,0 +1,37 @@
+====================
+Environment Variable
+====================
+
+example.com
+
+root * {$ROOT}
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(matcher)
+				(environment_variable)))))
+
+=======================================
+Environment Variable with Default Value
+=======================================
+
+example.com
+
+root * {$ROOT:/var/www}
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(matcher)
+				(environment_variable)))))

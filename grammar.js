@@ -40,7 +40,7 @@ const BARE_HOSTNAME_REGEX =
   /([a-z][a-z0-9\-]+)(\.[a-z][a-z0-9\-]+)*(\.[a-z]{2,}|xn--[a-z0-9]+)?/;
 
 const subdirectiveFields = $ => [
-  repeat(choice($.url, $.network_address, $.unix_socket, $.placeholder, $._string_literal, $.int_literal, $.argument)),
+  repeat(choice($.url, $.network_address, $.unix_socket, $.environment_variable, $.placeholder, $._string_literal, $.int_literal, $.argument)),
   choice($.block, token.immediate(/\r?\n/)),
 ];
 
@@ -116,8 +116,7 @@ module.exports = grammar({
 
     // Placeholder is used for environment variables or runtime value substitution
     placeholder: $ => $._placeholder,
-    _placeholder: $ => choice($.__placeholder, $._environment_variable),
-    __placeholder: $ =>
+    _placeholder: $ =>
       seq(
         '{',
         // TODO: this is probably not the best way to write this.
@@ -126,15 +125,25 @@ module.exports = grammar({
         // environment variables. Environment variables are replaced separately
         // of placeholders when the Caddyfile is parsed which is how this works.
         //
-        // The issue with this grammar is he environment variable can only be at
-        // the end of the placeholder, but the Caddyfile parser allows there to
-        // be any number of environment variables inside of a placeholder.
+        // The issue with this grammar is that the environment variable can only
+        // be at the end of the placeholder, but the Caddyfile parser allows
+        // there to be any number of environment variables inside of a
+        // placeholder.
         token.immediate(/[a-zA-Z0-9][a-zA-Z0-9_.\[\]]*/),
         optional($._environment_variable),
         '}',
       ),
-    // TODO: allow for `:<DEFAULT>`
-    _environment_variable: _ => token(seq('{$', token.immediate(/[a-zA-Z0-9][a-zA-Z0-9_.\[\]]*/), '}')),
+    environment_variable: $ => $._environment_variable,
+    _environment_variable: _ =>
+      token(
+        seq(
+          '{$',
+          // TODO: is `token.immediate` necessary here?
+          token.immediate(/[a-zA-Z0-9][a-zA-Z0-9_.\[\]]*/),
+          optional(seq(':', /[^}\n\r]+/)),
+          '}',
+        ),
+      ),
 
     // Directives
     directive_name: _ => /[a-zA-Z_\-+]+/,

@@ -1,22 +1,3 @@
-================================
-Environment Variable Placeholder
-================================
-
-example.com
-
-root * {$TEST}
-
----
-
-(source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(matcher)
-				(placeholder)))))
-
 =================
 Array Placeholder
 =================

@@ -33,16 +33,15 @@
 
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
+            cargo
             emscripten
             gcc
             go
             nodejs
             nodePackages.node-gyp
             python3
-            tree-sitter
-
-            cargo
             rustc
+            tree-sitter
           ];
         };
 
@@ -66,9 +65,6 @@
 
             # Enable deadnix, a Nix linter/formatter that removes un-used Nix code.
             deadnix.enable = true;
-
-            # Enable pinact, a tool for pinning re-usable GitHub Actions versions.
-            pinact.enable = true;
 
             # Enable prettier, a generic formatter usually used for JavaScript.
             prettier = {
