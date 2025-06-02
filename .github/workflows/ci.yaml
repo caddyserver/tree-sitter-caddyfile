@@ -39,7 +39,7 @@ jobs:
         uses: tree-sitter/setup-action/cli@cd96f2c296346c12cf539df3e5cd00102a1f2340 # v2
 
       - name: Run tests
-        uses: tree-sitter/parser-test-action@89f9071ad0c75902919524e56059c6898825343b # v2
+        uses: tree-sitter/parser-test-action@d431dc81dab94d23a08fb032e4e088f47f4a62b3 # v2
         with:
           test-go: true
           test-node: true
