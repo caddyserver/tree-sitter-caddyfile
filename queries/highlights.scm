@@ -15,13 +15,16 @@
 (matcher) @function.call
 
 [
-	(interpreted_string_literal)
-	(raw_string_literal)
+  (interpreted_string_literal)
+  (raw_string_literal)
 ] @string
 
 (escape_sequence) @escape
 
-(int_literal) @number
+[
+  (duration_literal)
+  (int_literal)
+] @number
 
 (comment) @comment
 

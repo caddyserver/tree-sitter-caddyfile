@@ -192,8 +192,7 @@ tailscale.is-great.ts.net {
 			(directive_name))
 		(directive
 			(directive_name)
-			(int_literal)
-			(argument))
+			(duration_literal))
 		(directive
 			(directive_name))
 		(directive

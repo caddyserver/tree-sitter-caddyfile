@@ -40,7 +40,20 @@ const BARE_HOSTNAME_REGEX =
 	/([a-z][a-z0-9\-]+)(\.[a-z][a-z0-9\-]+)*(\.[a-z]{2,}|xn--[a-z0-9]+)?/;
 
 const subdirectiveFields = $ => [
-	repeat(choice($.url, $.network_address, $.unix_socket, $.environment_variable, $.placeholder, $._string_literal, $.int_literal, $.argument, $.heredoc)),
+	repeat(
+		choice(
+			$.url,
+			$.network_address,
+			$.unix_socket,
+			$.environment_variable,
+			$.placeholder,
+			$._string_literal,
+			$.duration_literal,
+			$.int_literal,
+			$.argument,
+			$.heredoc,
+		),
+	),
 	choice($.block, token.immediate(/\r?\n/)),
 ];
 
@@ -194,6 +207,7 @@ module.exports = grammar({
 		escape_sequence: _ => token.immediate(seq('\\', choice(/[^xuU]/, /\d{2,3}/, /x[0-9a-fA-F]{2,}/, /u[0-9a-fA-F]{4}/, /U[0-9a-fA-F]{8}/))),
 
 		int_literal: _ => token(choice('0', seq(/[1-9]/, repeat(/[0-9]/)))),
+		duration_literal: _ => token(seq(choice('0', seq(/[1-9]/, repeat(/[0-9]/))), /(ns|us|µs|ms|s|m|h|d)/)),
 
 		//
 		// Addresses

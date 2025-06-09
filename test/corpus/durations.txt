@@ -1,0 +1,17 @@
+========
+Duration
+========
+
+example.com
+
+respond 5s
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(duration_literal)))))
