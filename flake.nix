@@ -52,6 +52,7 @@
             "LICENSE"
             "**/node_modules"
             "**/package-lock.json"
+            "src/parser.c"
           ];
 
           programs = {
