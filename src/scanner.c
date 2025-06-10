@@ -17,8 +17,6 @@ typedef struct {
 
 static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 
-static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
-
 static bool is_valid_heredoc_marker_char(int32_t c)
 {
 	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
