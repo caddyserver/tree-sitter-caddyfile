@@ -45,7 +45,8 @@ jobs:
           test-node: true
           test-python: true
           test-rust: true
-          test-swift: true
+          # TODO: enable once https://github.com/swift-actions/setup-swift/issues/694 is fixed.
+          test-swift: false
 
       - name: Parse examples
         uses: tree-sitter/parse-action@f44ffa94f802024f27e821a72e6f2f3efc5dd521 # v4
