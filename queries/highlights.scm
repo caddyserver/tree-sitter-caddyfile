@@ -1,7 +1,7 @@
 [
-	(url)
-	(unix_socket)
-	(network_address)
+  (url)
+  (unix_socket)
+  (network_address)
 ] @type
 (placeholder) @constant
 
@@ -17,6 +17,7 @@
 [
   (interpreted_string_literal)
   (raw_string_literal)
+  (heredoc)
 ] @string
 
 (escape_sequence) @escape
