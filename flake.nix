@@ -41,7 +41,6 @@
             nodePackages.node-gyp
             python3
             rustc
-            tree-sitter
           ];
         };
 
