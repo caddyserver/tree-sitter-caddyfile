@@ -27,3 +27,8 @@
 ] @number
 
 (comment) @comment
+
+[
+  "{"
+  "}"
+] @punctuation.bracket

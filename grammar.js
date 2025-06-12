@@ -42,6 +42,16 @@ const hostname = seq(DOMAIN_SECTION_REGEX, repeat(seq('.', DOMAIN_SECTION_REGEX)
 
 const bareHostname = seq(DOMAIN_SECTION_REGEX, repeat(seq('.', DOMAIN_SECTION_REGEX)), optional(seq('.', tld)));
 
+const environmentVariable = token(
+	seq(
+		'{$',
+		// TODO: is `token.immediate` necessary here?
+		token.immediate(/[a-zA-Z0-9][a-zA-Z0-9_.\[\]]*/),
+		optional(seq(':', /[^}\n\r]+/)),
+		'}',
+	),
+);
+
 const subdirectiveFields = $ => [
 	repeat(choice($.network_address, $.environment_variable, $.placeholder, $._string_literal, $.duration_literal, $.int_literal, $.argument, $.heredoc)),
 	choice($.block, token.immediate(/\r?\n/)),
@@ -192,34 +202,27 @@ module.exports = grammar({
 
 		// Placeholder is used for environment variables or runtime value substitution
 		placeholder: $ => $._placeholder,
-		_placeholder: $ =>
-			seq(
-				'{',
-				// TODO: this is probably not the best way to write this.
-				//
-				// You cannot nest placeholders in each other, but you can nest
-				// environment variables. Environment variables are replaced separately
-				// of placeholders when the Caddyfile is parsed which is how this works.
-				//
-				// The issue with this grammar is that the environment variable can only
-				// be at the end of the placeholder, but the Caddyfile parser allows
-				// there to be any number of environment variables inside of a
-				// placeholder.
-				token.immediate(/[a-zA-Z0-9][a-zA-Z0-9_.\[\]]*/),
-				optional($._environment_variable),
-				'}',
-			),
-		environment_variable: $ => $._environment_variable,
-		_environment_variable: _ =>
+		_placeholder: _ =>
 			token(
 				seq(
-					'{$',
-					// TODO: is `token.immediate` necessary here?
+					'{',
+					// TODO: this is probably not the best way to write this.
+					//
+					// You cannot nest placeholders in each other, but you can nest
+					// environment variables. Environment variables are replaced separately
+					// of placeholders when the Caddyfile is parsed which is how this works.
+					//
+					// The issue with this grammar is that the environment variable can only
+					// be at the end of the placeholder, but the Caddyfile parser allows
+					// there to be any number of environment variables inside of a
+					// placeholder.
 					token.immediate(/[a-zA-Z0-9][a-zA-Z0-9_.\[\]]*/),
-					optional(seq(':', /[^}\n\r]+/)),
+					optional(environmentVariable),
 					'}',
 				),
 			),
+		environment_variable: $ => $._environment_variable,
+		_environment_variable: _ => environmentVariable,
 
 		// Directives
 		directive_name: _ => /[a-zA-Z_\-+]+/,
@@ -235,7 +238,7 @@ module.exports = grammar({
 				// Path matching
 				token(seq(choice('/', '\\'), /([a-zA-Z0-9\-_%\\\/.]+)*(\*){0,1}/)),
 				// Named matcher
-				$.matcher_name,
+				field('name', $.matcher_name),
 			),
 
 		//
