@@ -14,7 +14,7 @@ redir https://example.com/#/about 302
 			(site_address)
 			(directive
 				(directive_name)
-				(url)
+				(network_address)
 				(int_literal)))))
 
 ==============================

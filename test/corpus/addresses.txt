@@ -1,0 +1,240 @@
+=========
+Hostnames
+=========
+
+example.com
+
+reverse_proxy example.com
+reverse_proxy example.com:8080
+reverse_proxy http://example.com
+reverse_proxy http://example.com:8080
+reverse_proxy https://example.com
+reverse_proxy https://example.com:8080
+
+reverse_proxy my.really.dumb.hostname
+reverse_proxy https://my.really.dumb.hostname
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address)))))
+
+================
+File Descriptors
+================
+
+example.com
+
+reverse_proxy fdgram/3
+reverse_proxy fd/4
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address)))))
+
+============
+Unix Sockets
+============
+
+example.com
+
+reverse_proxy unix//run/grafana/grafana.sock
+reverse_proxy unix+h2c//run/grafana/grafana.sock
+reverse_proxy unixgram//run/grafana/grafana.sock
+reverse_proxy unixpacket//run/grafana/grafana.sock
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address)))))
+
+=================
+Bare IP Addresses
+=================
+
+example.com
+
+reverse_proxy 127.0.0.1
+reverse_proxy 127.0.0.1:8080
+reverse_proxy [::1]
+reverse_proxy [::1]:8080
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address)))))
+
+=========================
+IP Address with Protocol
+==========================
+
+example.com
+
+reverse_proxy ip/127.0.0.1
+reverse_proxy ip/127.0.0.1:8080
+reverse_proxy ip/[::1]
+reverse_proxy ip/[::1]:8080
+reverse_proxy ip4/127.0.0.1
+reverse_proxy ip4/127.0.0.1:8080
+reverse_proxy ip6/[::1]
+reverse_proxy ip6/[::1]:8080
+
+reverse_proxy tcp/127.0.0.1
+reverse_proxy tcp/127.0.0.1:8080
+reverse_proxy tcp/[::1]
+reverse_proxy tcp/[::1]:8080
+reverse_proxy tcp4/127.0.0.1
+reverse_proxy tcp4/127.0.0.1:8080
+reverse_proxy tcp6/[::1]
+reverse_proxy tcp6/[::1]:8080
+
+reverse_proxy udp/127.0.0.1
+reverse_proxy udp/127.0.0.1:8080
+reverse_proxy udp/[::1]
+reverse_proxy udp/[::1]:8080
+reverse_proxy udp4/127.0.0.1
+reverse_proxy udp4/127.0.0.1:8080
+reverse_proxy udp6/[::1]
+reverse_proxy udp6/[::1]:8080
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address))
+			(directive
+				(directive_name)
+				(network_address)))))

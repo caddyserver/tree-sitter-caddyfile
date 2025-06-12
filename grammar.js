@@ -16,6 +16,14 @@ const URL_SCHEME_REGEX = /[a-z]+:\/\//;
 
 const PORT_REGEX = /[0-9]{1,5}/;
 
+// NOTE: do not use `[a-z]{2,}` here. tree-sitter doesn't handle that regex
+// syntax correctly. The grammar will compile but it won't match correctly.
+const tld = choice(/[a-z][a-z]+/, /xn--[a-z0-9]+/);
+
+// Must start with `a-z`, after the first character `0-9` and `-` are allowed,
+// cannot end with a `-`.
+const DOMAIN_SECTION_REGEX = /[a-z][a-z0-9\-]*[a-z0-9]+/;
+
 // Hostname regex, allows:
 // - Domains (example.com)
 // - Subdomains (sub.example.com)
@@ -30,42 +38,33 @@ const PORT_REGEX = /[0-9]{1,5}/;
 //
 // If you want something like `localhost` or `my-hostname` to match, add a
 // scheme so it can get matched as a network address.
-const HOSTNAME_REGEX =
-	// TODO: doesn't end with `-` validation?
-	/([a-z][a-z0-9\-]+)(\.[a-z][a-z0-9\-]+)*(\.[a-z]{2,}|xn--[a-z0-9]+)/;
+const hostname = seq(DOMAIN_SECTION_REGEX, repeat(seq('.', DOMAIN_SECTION_REGEX)), '.', tld);
 
-const BARE_HOSTNAME_REGEX =
-	// TODO: doesn't end with `-` validation?
-	/([a-z][a-z0-9\-]+)(\.[a-z][a-z0-9\-]+)*(\.[a-z]{2,}|xn--[a-z0-9]+)?/;
+const bareHostname = seq(DOMAIN_SECTION_REGEX, repeat(seq('.', DOMAIN_SECTION_REGEX)), optional(seq('.', tld)));
 
 const subdirectiveFields = $ => [
-	repeat(
-		choice(
-			$.url,
-			$.network_address,
-			$.unix_socket,
-			$.environment_variable,
-			$.placeholder,
-			$._string_literal,
-			$.duration_literal,
-			$.int_literal,
-			$.argument,
-			$.heredoc,
-		),
-	),
+	repeat(choice($.network_address, $.environment_variable, $.placeholder, $._string_literal, $.duration_literal, $.int_literal, $.argument, $.heredoc)),
 	choice($.block, token.immediate(/\r?\n/)),
 ];
 
 const directiveFields = $ => [optional($.matcher), ...subdirectiveFields($)];
+
+const IPV6_ADDRESS = seq('[', IPV6_REGEX, optional(seq('%', /[a-z0-9]+/)), ']');
 
 module.exports = grammar({
 	name: 'caddyfile',
 
 	extras: $ => [$.comment, /\s/],
 
+	word: $ => $.argument,
+
 	externals: $ => [$._heredoc_start, $.heredoc_body, $._heredoc_end],
 
 	rules: {
+		//
+		// Caddyfile
+		//
+
 		source_file: $ =>
 			seq(
 				// Allow a single "global options" block at the beginning of the file.
@@ -97,36 +96,99 @@ module.exports = grammar({
 		//
 		// https://caddyserver.com/docs/caddyfile/concepts#named-routes
 		named_route_identifier: _ => token(seq('&(', /[a-zA-Z0-9\-_]+/, ')')),
-		named_route: $ => seq(field('identifier', $.named_route_identifier), $.block),
+		named_route: $ => seq(field('name', $.named_route_identifier), $.block),
 
-		// Comment is available at the start (or during) a line that contains a # with preceding whitespace
-		comment: _ => token(seq('#', /(#+(.|\r?\n)|[^#\n])*/)),
+		//
+		// Addresses
+		//
 
-		// Argument is pretty much anything that isn't a matcher
-		argument: _ => /[a-zA-Z\-_+.\\\/*]([a-zA-Z\-_+.\\\/*0-9]*)/,
-
-		// Website URLs or a Unix Socket path
-		url: _ =>
-			// Needs prec of 1 or higher to avoid having a comment take precedence if
-			// the URL contains a fragment (`#`).
-			// TODO: figure out why URLs with a `#` result in slow parsing.
-			token(
-				prec(
-					1,
+		network_address: _ =>
+			choice(
+				token(
 					seq(
-						'http',
-						optional('s'),
+						choice(IPV4_REGEX, IPV6_ADDRESS, hostname),
+						optional(seq(':', PORT_REGEX)),
+						repeat(seq('/', /([A-Za-z0-9\-_.~!&'\(\)*+,;=:#]|%[0-9a-fA-F]{2})*/)),
+					),
+				),
+				token(
+					seq(
+						choice('http', 'https', 'h2c'),
 						'://',
-						choice(IPV4_REGEX, seq('[', IPV6_REGEX, ']'), BARE_HOSTNAME_REGEX),
-						optional(PORT_REGEX),
-						// Require at least a trailing slash to be considered a URL.
-						//
-						// This portion of the URL token is what separates a URL from a
-						// network address.
-						repeat1(seq('/', /([A-Za-z0-9\-_.~!&'\(\)*+,;=:#]|%[0-9a-fA-F]{2})*/)),
+						choice(IPV4_REGEX, IPV6_ADDRESS, bareHostname),
+						optional(seq(':', PORT_REGEX)),
+						repeat(seq('/', /([A-Za-z0-9\-_.~!&'\(\)*+,;=:#]|%[0-9a-fA-F]{2})*/)),
+					),
+				),
+
+				token(seq(field('network', choice('fd', 'fdgram')), '/', field('address', /[0-9]+/))),
+
+				token(
+					seq(
+						field('network', choice('unix', 'unix+h2c', 'unixgram', 'unixpacket')),
+						'/',
+						field('address', /\/[a-zA-Z0-9_\-./*]+/),
+						optional(seq('|', field('perms', /[0-9]{3,4}/))),
+					),
+				),
+
+				token(
+					seq(
+						field('network', choice('ip', 'ip4', 'ip6', 'tcp', 'tcp4', 'tcp6', 'udp', 'udp4', 'udp6')),
+						'/',
+						field('address', seq(choice(IPV4_REGEX, IPV6_ADDRESS, bareHostname), optional(seq(':', PORT_REGEX)))),
+					),
+				),
+
+				token(field('address', seq(bareHostname, ':', PORT_REGEX))),
+			),
+
+		site_address: $ =>
+			choice(
+				// Bare protocols
+				'http://',
+				'https://',
+				// TODO: is `h2c://` also supported here?
+
+				// Bare port
+				token(seq(':', PORT_REGEX)),
+
+				// Environment variable.
+				//
+				// According to the Caddy docs, placeholders cannot be used in addresses,
+				// but you can use environment variables. `{$ENV_VAR}`, not `{env.ENV_VAR}`
+				$._environment_variable,
+
+				token(
+					seq(
+						// TODO: I understand allowing http and https but why all schemes?
+						optional(URL_SCHEME_REGEX),
+						choice(
+							IPV4_REGEX,
+							IPV6_ADDRESS,
+							// Hostname regex, allows:
+							// - Bare domains (localhost, my-system, etc),
+							// - Domains (example.com)
+							// - Subdomains (sub.example.com)
+							// - Punycode (example.xn--ses554g)
+							//
+							// Also allows for a wildcard (*) as the furthest left subdomain.
+							seq(choice('*', DOMAIN_SECTION_REGEX), repeat(seq('.', DOMAIN_SECTION_REGEX)), optional(seq('.', tld))),
+						),
+						optional(seq(':', PORT_REGEX)),
 					),
 				),
 			),
+
+		//
+		// Tokens
+		//
+
+		// Comment is available at the start (or during) a line that contains a # with preceding whitespace
+		comment: _ => token(seq('#', /.*/)),
+
+		// Argument is pretty much anything that isn't a matcher
+		argument: _ => /[a-zA-Z\-_+.\\\/*]([a-zA-Z\-_+.\\\/*0-9]*)/,
 
 		// Placeholder is used for environment variables or runtime value substitution
 		placeholder: $ => $._placeholder,
@@ -180,16 +242,16 @@ module.exports = grammar({
 		// Sites
 		//
 
-		sites: $ => choice($.single_site, repeat1($.site_definition)),
-
-		single_site: $ => seq(field('name', commaSep1($.site_address)), field('definitions', repeat($._definition))),
-
-		site_definition: $ => seq(field('name', commaSep1($.site_address)), $.block),
-
 		_definition: $ => choice($.directive, $.named_matcher),
 
 		// Block is a site block that is allowed to define directives and named matchers.
-		block: $ => seq('{', token.immediate(/\r?\n/), repeat($._definition), '}'),
+		block: $ => seq('{', token.immediate(/\r?\n/), field('body', repeat($._definition)), '}'),
+
+		site_definition: $ => seq(field('name', commaSep1($.site_address)), $.block),
+
+		sites: $ => choice($.single_site, repeat1($.site_definition)),
+
+		single_site: $ => seq(field('name', commaSep1($.site_address)), field('body', repeat($._definition))),
 
 		//
 		// Literals
@@ -209,71 +271,12 @@ module.exports = grammar({
 		duration_literal: _ => token(seq(choice('0', seq(/[1-9]/, repeat(/[0-9]/))), /(ns|us|µs|ms|s|m|h|d)/)),
 
 		//
-		// Addresses
+		// Heredocs (implementation is in `src/scanner.c`)
 		//
-
-		site_address: $ =>
-			choice(
-				// Bare protocols
-				'http://',
-				'https://',
-
-				// Bare port
-				token(seq(':', PORT_REGEX)),
-
-				// Environment variable.
-				//
-				// According to the Caddy docs, placeholders cannot be used in addresses,
-				// but you can use environment variables. `{$ENV_VAR}`, not `{env.ENV_VAR}`
-				$._environment_variable,
-
-				token(
-					seq(
-						optional(URL_SCHEME_REGEX),
-						choice(
-							IPV4_REGEX,
-							seq('[', IPV6_REGEX, ']'),
-							// Hostname regex, allows:
-							// - Bare domains (localhost, my-system, etc),
-							// - Domains (example.com)
-							// - Subdomains (sub.example.com)
-							// - Punycode (example.xn--ses554g)
-							//
-							// Also allows for a wildcard (*) as the furthest left subdomain.
-							/(\*|[a-z][a-z0-9\-]+)(\.[a-z][a-z0-9\-]+)*(\.[a-z]{2,}|xn--[a-z0-9]+)?/,
-						),
-						optional(seq(':', PORT_REGEX)),
-					),
-				),
-			),
-
-		// TODO: do we want to merge this into network_address?
-		unix_socket: _ => token(prec(2, seq(/[a-z][a-z+]*/, '//', /[a-zA-Z0-9_\-./*]+/))),
-
-		// TODO: do we really want to use token and prec on each one of these
-		// cases?
-		network_address: _ =>
-			choice(
-				token(prec(1, seq(URL_SCHEME_REGEX, choice(IPV4_REGEX, seq('[', IPV6_REGEX, ']'), BARE_HOSTNAME_REGEX), optional(seq(':', PORT_REGEX))))),
-				token(prec(2, seq(optional(URL_SCHEME_REGEX), choice(IPV4_REGEX, seq('[', IPV6_REGEX, ']'), HOSTNAME_REGEX), optional(seq(':', PORT_REGEX))))),
-				token(prec(3, seq(BARE_HOSTNAME_REGEX, ':', PORT_REGEX))),
-			),
 
 		heredoc: $ => seq('<<', $._heredoc_start, optional(repeat($.heredoc_body)), $._heredoc_end),
 	},
 });
-
-/**
- * Creates a rule to optionally match one or more of the rules separated by a comma
- *
- * @param {Rule} rule
- *
- * @returns {ChoiceRule}
- */
-// eslint-disable-next-line no-unused-vars
-function commaSep(rule) {
-	return optional(commaSep1(rule));
-}
 
 /**
  * Creates a rule to match one or more of the rules separated by a comma

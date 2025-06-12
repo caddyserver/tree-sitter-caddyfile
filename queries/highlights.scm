@@ -1,8 +1,4 @@
-[
-  (url)
-  (unix_socket)
-  (network_address)
-] @type
+(network_address) @type
 (placeholder) @constant
 
 (site_address) @keyword
@@ -28,16 +24,3 @@
 ] @number
 
 (comment) @comment
-
-;[
-;	"on"
-;	"off"
-;	"first"
-;	"last"
-;	"before"
-;	"after"
-;	"internal"
-;	"strip_prefix"
-;	"strip_suffix"
-;	"replace"
-;] @constant

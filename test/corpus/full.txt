@@ -210,21 +210,21 @@ tailscale.is-great.ts.net {
 							(argument))))))
 		(directive
 			(directive_name)
-			(argument)
+			(network_address)
 			(block
 				(directive
 					(directive_name)
 					(argument))))
 		(directive
 			(directive_name)
-			(argument)
+			(network_address)
 			(block
 				(directive
 					(directive_name)
 					(argument))))
 		(directive
 			(directive_name)
-			(argument)
+			(network_address)
 			(block
 				(directive
 					(directive_name)
@@ -240,7 +240,7 @@ tailscale.is-great.ts.net {
 			(placeholder))
 		(directive
 			(directive_name)
-			(argument)))
+			(network_address)))
 	(snippet_definition
 		(snippet_name)
 		(block
@@ -282,13 +282,13 @@ tailscale.is-great.ts.net {
 		(block
 			(directive
 				(directive_name)
-				(unix_socket))))
+				(network_address))))
 	(named_route
 		(named_route_identifier)
 		(block
 			(directive
 				(directive_name)
-				(unix_socket))))
+				(network_address))))
 	(sites
 		(site_definition
 			(site_address)
@@ -305,7 +305,7 @@ tailscale.is-great.ts.net {
 				(named_matcher
 					(matcher_name)
 					(argument)
-					(argument))
+					(network_address))
 				(directive
 					(directive_name)
 					(matcher
@@ -319,7 +319,7 @@ tailscale.is-great.ts.net {
 				(named_matcher
 					(matcher_name)
 					(argument)
-					(argument))
+					(network_address))
 				(directive
 					(directive_name)
 					(matcher
@@ -334,7 +334,7 @@ tailscale.is-great.ts.net {
 				(named_matcher
 					(matcher_name)
 					(argument)
-					(argument))
+					(network_address))
 				(directive
 					(directive_name)
 					(matcher
@@ -349,7 +349,7 @@ tailscale.is-great.ts.net {
 				(named_matcher
 					(matcher_name)
 					(argument)
-					(argument))
+					(network_address))
 				(directive
 					(directive_name)
 					(matcher
@@ -391,7 +391,7 @@ tailscale.is-great.ts.net {
 						(block
 							(directive
 								(directive_name)
-								(unix_socket))))
+								(network_address))))
 				(directive
 					(directive_name)
 					(argument)
@@ -402,7 +402,7 @@ tailscale.is-great.ts.net {
 							(argument))
 						(directive
 							(directive_name)
-							(unix_socket))))
+							(network_address))))
 				(directive
 					(directive_name)
 					(argument)

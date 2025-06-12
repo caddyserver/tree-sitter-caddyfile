@@ -2,20 +2,21 @@
 	{
 		"type": "block",
 		"named": true,
-		"fields": {},
-		"children": {
-			"multiple": true,
-			"required": false,
-			"types": [
-				{
-					"type": "directive",
-					"named": true
-				},
-				{
-					"type": "named_matcher",
-					"named": true
-				}
-			]
+		"fields": {
+			"body": {
+				"multiple": true,
+				"required": false,
+				"types": [
+					{
+						"type": "directive",
+						"named": true
+					},
+					{
+						"type": "named_matcher",
+						"named": true
+					}
+				]
+			}
 		}
 	},
 	{
@@ -79,14 +80,6 @@
 				},
 				{
 					"type": "raw_string_literal",
-					"named": true
-				},
-				{
-					"type": "unix_socket",
-					"named": true
-				},
-				{
-					"type": "url",
 					"named": true
 				}
 			]
@@ -215,14 +208,6 @@
 				{
 					"type": "raw_string_literal",
 					"named": true
-				},
-				{
-					"type": "unix_socket",
-					"named": true
-				},
-				{
-					"type": "url",
-					"named": true
 				}
 			]
 		}
@@ -231,7 +216,7 @@
 		"type": "named_route",
 		"named": true,
 		"fields": {
-			"identifier": {
+			"name": {
 				"multiple": false,
 				"required": true,
 				"types": [
@@ -267,7 +252,7 @@
 		"type": "single_site",
 		"named": true,
 		"fields": {
-			"definitions": {
+			"body": {
 				"multiple": true,
 				"required": false,
 				"types": [
@@ -460,14 +445,6 @@
 	},
 	{
 		"type": "snippet_name",
-		"named": true
-	},
-	{
-		"type": "unix_socket",
-		"named": true
-	},
-	{
-		"type": "url",
 		"named": true
 	},
 	{
