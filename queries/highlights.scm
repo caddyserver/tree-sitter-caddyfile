@@ -1,8 +1,11 @@
 (network_address) @type
 (placeholder) @constant
 
-(site_address) @keyword
-(snippet_name) @property
+[
+  (snippet_name)
+  (named_route_identifier)
+  (site_address)
+] @keyword
 
 (directive (directive_name) @property)
 
