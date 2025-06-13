@@ -244,7 +244,7 @@ module.exports = grammar({
 		directive: $ => seq(field('name', $.directive_name), ...directiveFields($)),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#path-matchers
-		path_matcher: _ => token(prec(2, seq(choice('/', '\\'), /([a-zA-Z0-9\-_%\\\/.]+)*(\*)?/))),
+		path: _ => token(prec(2, seq(choice('/', '\\'), /([a-zA-Z0-9\-_%\\\/.]+)*(\*)?/))),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#named-matchers
 		matcher_name: _ => /[a-zA-Z0-9\-_]+/,
@@ -282,6 +282,7 @@ module.exports = grammar({
 									$.network_address,
 									$.environment_variable,
 									$.placeholder,
+									$.path,
 									$._string_literal,
 									$.duration_literal,
 									$.int_literal,
@@ -305,7 +306,7 @@ module.exports = grammar({
 				// Allow a lone `*`
 				'*',
 				// Path matching
-				$.path_matcher,
+				alias($.path, $.path_matcher),
 				// Named matcher
 				$.matcher_identifier,
 			),

@@ -1439,7 +1439,7 @@
 				}
 			]
 		},
-		"path_matcher": {
+		"path": {
 			"type": "TOKEN",
 			"content": {
 				"type": "PREC",
@@ -1716,6 +1716,10 @@
 													},
 													{
 														"type": "SYMBOL",
+														"name": "path"
+													},
+													{
+														"type": "SYMBOL",
 														"name": "_string_literal"
 													},
 													{
@@ -1786,8 +1790,13 @@
 					"value": "*"
 				},
 				{
-					"type": "SYMBOL",
-					"name": "path_matcher"
+					"type": "ALIAS",
+					"content": {
+						"type": "SYMBOL",
+						"name": "path"
+					},
+					"named": true,
+					"value": "path_matcher"
 				},
 				{
 					"type": "SYMBOL",

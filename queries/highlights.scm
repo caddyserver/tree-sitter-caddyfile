@@ -7,6 +7,7 @@
 [
   (network_address)
   (ip_address_or_cidr)
+  (path)
 ] @type
 
 [

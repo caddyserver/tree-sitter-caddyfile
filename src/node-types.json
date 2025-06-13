@@ -267,6 +267,10 @@
 					"named": true
 				},
 				{
+					"type": "path",
+					"named": true
+				},
+				{
 					"type": "placeholder",
 					"named": true
 				},
@@ -576,6 +580,10 @@
 	{
 		"type": "not",
 		"named": false
+	},
+	{
+		"type": "path",
+		"named": true
 	},
 	{
 		"type": "path_matcher",
