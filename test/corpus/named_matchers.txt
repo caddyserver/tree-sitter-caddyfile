@@ -1,0 +1,163 @@
+=============
+Named Matcher
+=============
+
+*.example.com
+
+@test host test.example.com
+
+reverse_proxy @test 127.0.0.1
+
+---
+
+(source_file
+	(sites
+		(single_site
+			name: (site_address)
+			body: (named_matcher
+				(matcher_identifier
+					name: (matcher_name))
+				(matcher_directive
+					name: (matcher_directive_name)
+					(network_address)))
+			body: (directive
+				name: (directive_name)
+				(matcher
+					(matcher_identifier
+						name: (matcher_name)))
+				(network_address)))))
+
+===================
+Named Matcher Block
+===================
+
+*.example.com
+
+@test {
+	host test.example.com
+}
+
+reverse_proxy @test 127.0.0.1
+
+---
+
+(source_file
+	(sites
+		(single_site
+			name: (site_address)
+			body: (named_matcher
+				(matcher_identifier
+					name: (matcher_name))
+				(matcher_block
+					body: (matcher_directive
+						name: (matcher_directive_name)
+						(network_address))))
+			body: (directive
+				name: (directive_name)
+				(matcher
+					(matcher_identifier
+						name: (matcher_name)))
+				(network_address)))))
+
+===========
+Not Matcher
+===========
+
+*.example.com
+
+@test not host test.example.com
+
+reverse_proxy @test 127.0.0.1
+
+---
+
+(source_file
+	(sites
+		(single_site
+			name: (site_address)
+			body: (named_matcher
+				(matcher_identifier
+					name: (matcher_name))
+				(matcher_directive
+					name: (matcher_directive_name)
+					(network_address)))
+			body: (directive
+				name: (directive_name)
+				(matcher
+					(matcher_identifier
+						name: (matcher_name)))
+				(network_address)))))
+
+===========
+CEL Matcher
+===========
+
+*.example.com
+
+@test `{method}.startsWith("P")`
+@test2 expression `{method}.startsWith("P")`
+@test3 expression {method}.startsWith("P")
+
+reverse_proxy @test 127.0.0.1
+
+---
+
+(source_file
+	(sites
+		(single_site
+			name: (site_address)
+			body: (named_matcher
+				(matcher_identifier
+					name: (matcher_name))
+				(matcher_directive
+					expression: (cel_expression)))
+			body: (named_matcher
+				(matcher_identifier
+					name: (matcher_name))
+				(matcher_directive
+					expression: (cel_expression)))
+			body: (named_matcher
+				(matcher_identifier
+					name: (matcher_name))
+				(matcher_directive
+					expression: (cel_expression)))
+			body: (directive
+				name: (directive_name)
+				(matcher
+					(matcher_identifier
+						name: (matcher_name)))
+				(network_address)))))
+
+=========================================
+Matcher Directive with Multiple Arguments
+=========================================
+
+example.com
+
+@private client_ip 192.168.0.0/16 172.16.0.0/12 10.0.0.0/8 127.0.0.1/8 fd00::/8 ::1
+
+reverse_proxy @private 127.0.0.1
+
+---
+
+(source_file
+	(sites
+		(single_site
+			name: (site_address)
+			body: (named_matcher
+				(matcher_identifier
+					name: (matcher_name))
+				(matcher_directive
+					name: (matcher_directive_name)
+					(ip_address_or_cidr)
+					(ip_address_or_cidr)
+					(ip_address_or_cidr)
+					(ip_address_or_cidr)
+					(ip_address_or_cidr)
+					(ip_address_or_cidr)))
+			body: (directive
+				name: (directive_name)
+				(matcher
+					(matcher_identifier
+						name: (matcher_name)))
+				(network_address)))))

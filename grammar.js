@@ -7,10 +7,15 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+const NEW_LINE_REGEX = /\r?\n|\r/;
+
 const IPV4_REGEX = /((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/;
 
 const IPV6_REGEX =
 	/(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/;
+
+const ipv4Cidr = token(seq(IPV4_REGEX, token.immediate('/'), token.immediate(/[0-9]|1[0-9]|2[0-9]|3[0-2]/)));
+const ipv6Cidr = token(seq(IPV6_REGEX, token.immediate('/'), token.immediate(/[0-9][0-9]?|1[01][0-9]|12[0-8]/)));
 
 const URL_SCHEME_REGEX = /[a-z]+:\/\//;
 
@@ -54,7 +59,7 @@ const environmentVariable = token(
 
 const subdirectiveFields = $ => [
 	repeat(choice($.network_address, $.environment_variable, $.placeholder, $._string_literal, $.duration_literal, $.int_literal, $.argument, $.heredoc)),
-	choice($.block, token.immediate(/\r?\n/)),
+	choice($.block, token.immediate(NEW_LINE_REGEX)),
 ];
 
 const directiveFields = $ => [optional($.matcher), ...subdirectiveFields($)];
@@ -91,7 +96,7 @@ module.exports = grammar({
 		// Defining snippets or named matchers is not allowed in it's scope.
 		//
 		// https://caddyserver.com/docs/caddyfile/concepts#snippets
-		global_options: $ => seq('{', token.immediate(/\r?\n/), repeat($.directive), '}'),
+		global_options: $ => seq('{', token.immediate(NEW_LINE_REGEX), repeat($.directive), '}'),
 
 		// Snippets are re-usable parts of a caddyfile, the content of a snippet can be anything
 		// that is allowed inside of a site block.
@@ -111,6 +116,16 @@ module.exports = grammar({
 		//
 		// Addresses
 		//
+
+		_ipv4_address: _ => IPV4_REGEX,
+		_ipv6_address: _ => IPV6_REGEX,
+		_ip_address: _ => choice(IPV4_REGEX, IPV6_REGEX),
+
+		_ipv4_cidr: _ => ipv4Cidr,
+		_ipv6_cidr: _ => ipv6Cidr,
+		_ip_cidr: _ => choice(ipv4Cidr, ipv6Cidr),
+
+		ip_address_or_cidr: _ => choice(IPV4_REGEX, IPV6_REGEX, ipv4Cidr, ipv6Cidr),
 
 		network_address: _ =>
 			choice(
@@ -228,17 +243,68 @@ module.exports = grammar({
 		directive_name: _ => /[a-zA-Z_\-+]+/,
 		directive: $ => seq(field('name', $.directive_name), ...directiveFields($)),
 
+		// https://caddyserver.com/docs/caddyfile/matchers#path-matchers
+		path_matcher: _ => token(prec(2, seq(choice('/', '\\'), /([a-zA-Z0-9\-_%\\\/.]+)*(\*)?/))),
+
 		// https://caddyserver.com/docs/caddyfile/matchers#named-matchers
-		matcher_name: _ => token(seq('@', /[a-zA-Z0-9\-_]+/)),
-		named_matcher: $ => seq(field('name', $.matcher_name), ...subdirectiveFields($)),
+		matcher_name: _ => /[a-zA-Z0-9\-_]+/,
+		matcher_identifier: $ => seq('@', field('name', $.matcher_name)),
+
+		// https://caddyserver.com/docs/caddyfile/matchers#expression
+		_bare_cel_expression: $ => repeat1($._bare_cel_expression_content),
+		_bare_cel_expression_content: _ => token.immediate(prec(1, /[^\n]+/)),
+		_quoted_cel_expression: $ => prec(2, repeat1($._quoted_cel_expression_content)),
+		_quoted_cel_expression_content: _ => token.immediate(prec(1, /[^`\n]+/)),
+
+		// These are used so we can recognize matchers as built-ins.
+		matcher_block: $ => seq('{', token.immediate(NEW_LINE_REGEX), field('body', repeat($.matcher_directive)), '}'),
+		matcher_directive_name: _ => seq(optional('not'), /[a-zA-Z_+]+/),
+		matcher_directive: $ =>
+			seq(
+				choice(
+					seq('`', field('expression', alias($._quoted_cel_expression, $.cel_expression)), token.immediate('`')),
+					seq(
+						'expression',
+						choice(
+							// Due the regex for `_bare_cel_expression` matching everything except a new-line,
+							// we need *lexical precedence* (which requires `token(prec(<number>, ...))`) in
+							// order to match the quoted expression if a ` is present.
+							seq(token(prec(2, '`')), field('expression', alias($._quoted_cel_expression, $.cel_expression)), token.immediate('`')),
+							field('expression', alias($._bare_cel_expression, $.cel_expression)),
+						),
+					),
+					seq(
+						field('name', $.matcher_directive_name),
+						repeat1(
+							choice(
+								$.network_address,
+								$.environment_variable,
+								$.placeholder,
+								$._string_literal,
+								$.duration_literal,
+								$.int_literal,
+								$.argument,
+								$.heredoc,
+								$.ip_address_or_cidr,
+							),
+						),
+					),
+				),
+				token.immediate(NEW_LINE_REGEX),
+			),
+
+		// named_matcher is for the actual definition, like `@name host example.com`
+		// or with a body.
+		named_matcher: $ => seq($.matcher_identifier, choice($.matcher_block, $.matcher_directive)),
+
 		matcher: $ =>
 			choice(
 				// Allow a lone `*`
 				'*',
 				// Path matching
-				token(seq(choice('/', '\\'), /([a-zA-Z0-9\-_%\\\/.]+)*(\*){0,1}/)),
+				$.path_matcher,
 				// Named matcher
-				field('name', $.matcher_name),
+				$.matcher_identifier,
 			),
 
 		//
@@ -248,7 +314,7 @@ module.exports = grammar({
 		_definition: $ => choice($.directive, $.named_matcher),
 
 		// Block is a site block that is allowed to define directives and named matchers.
-		block: $ => seq('{', token.immediate(/\r?\n/), field('body', repeat($._definition)), '}'),
+		block: $ => seq('{', token.immediate(NEW_LINE_REGEX), field('body', repeat($._definition)), '}'),
 
 		site_definition: $ => seq(field('name', commaSep1($.site_address)), $.block),
 
