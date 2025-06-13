@@ -262,8 +262,8 @@ module.exports = grammar({
 
 		_string_literal: $ => choice($.raw_string_literal, $.interpreted_string_literal),
 
-		// TODO: this will allow new-lines which we don't want to allow.
-		raw_string_literal: _ => token(seq('`', repeat(/[^`]/), '`')),
+		raw_string_literal: $ => seq('`', repeat($._raw_string_literal_basic_content), token.immediate('`')),
+		_raw_string_literal_basic_content: _ => token.immediate(prec(1, /[^`\n]+/)),
 
 		interpreted_string_literal: $ => seq('"', repeat(choice($._interpreted_string_literal_basic_content, $.escape_sequence)), token.immediate('"')),
 		_interpreted_string_literal_basic_content: _ => token.immediate(prec(1, /[^"\n\\]+/)),
