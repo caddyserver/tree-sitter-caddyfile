@@ -259,6 +259,10 @@
 					"named": true
 				},
 				{
+					"type": "matcher_block",
+					"named": true
+				},
+				{
 					"type": "network_address",
 					"named": true
 				},

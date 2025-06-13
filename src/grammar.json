@@ -1691,48 +1691,57 @@
 									}
 								},
 								{
-									"type": "REPEAT1",
-									"content": {
-										"type": "CHOICE",
-										"members": [
-											{
-												"type": "SYMBOL",
-												"name": "network_address"
-											},
-											{
-												"type": "SYMBOL",
-												"name": "environment_variable"
-											},
-											{
-												"type": "SYMBOL",
-												"name": "placeholder"
-											},
-											{
-												"type": "SYMBOL",
-												"name": "_string_literal"
-											},
-											{
-												"type": "SYMBOL",
-												"name": "duration_literal"
-											},
-											{
-												"type": "SYMBOL",
-												"name": "int_literal"
-											},
-											{
-												"type": "SYMBOL",
-												"name": "argument"
-											},
-											{
-												"type": "SYMBOL",
-												"name": "heredoc"
-											},
-											{
-												"type": "SYMBOL",
-												"name": "ip_address_or_cidr"
+									"type": "CHOICE",
+									"members": [
+										{
+											"type": "SYMBOL",
+											"name": "matcher_block"
+										},
+										{
+											"type": "REPEAT1",
+											"content": {
+												"type": "CHOICE",
+												"members": [
+													{
+														"type": "SYMBOL",
+														"name": "network_address"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "environment_variable"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "placeholder"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "_string_literal"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "duration_literal"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "int_literal"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "argument"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "heredoc"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "ip_address_or_cidr"
+													}
+												]
 											}
-										]
-									}
+										}
+									]
 								}
 							]
 						}

@@ -275,17 +275,20 @@ module.exports = grammar({
 					),
 					seq(
 						field('name', $.matcher_directive_name),
-						repeat1(
-							choice(
-								$.network_address,
-								$.environment_variable,
-								$.placeholder,
-								$._string_literal,
-								$.duration_literal,
-								$.int_literal,
-								$.argument,
-								$.heredoc,
-								$.ip_address_or_cidr,
+						choice(
+							$.matcher_block,
+							repeat1(
+								choice(
+									$.network_address,
+									$.environment_variable,
+									$.placeholder,
+									$._string_literal,
+									$.duration_literal,
+									$.int_literal,
+									$.argument,
+									$.heredoc,
+									$.ip_address_or_cidr,
+								),
 							),
 						),
 					),
