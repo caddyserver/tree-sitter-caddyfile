@@ -18,14 +18,14 @@
 
 (directive (directive_name) @property)
 
-; directive for a named matcher declaration
-(matcher_directive (matcher_directive_name) @function.builtin)
+; declaration of a named matcher
+(named_matcher (matcher_identifier (matcher_name)) @function.macro)
 
-; named matcher declaration
-(named_matcher (matcher_identifier (matcher_name)) @function.method)
-
-; named matcher call
+; reference to a named matcher
 (matcher (matcher_identifier (matcher_name)) @function.macro)
+
+; directive within a named matcher declaration
+(matcher_directive (matcher_directive_name) @function.method)
 
 ; any other matcher (wildcard and path)
 (matcher) @function.macro
