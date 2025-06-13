@@ -18,7 +18,7 @@
 (directive (directive_name) @property)
 
 ; directive for a named matcher declaration
-(matcher_directive (matcher_directive_name)) @function.builtin
+(matcher_directive (matcher_directive_name) @function.builtin)
 
 ; named matcher declaration
 (named_matcher (matcher_identifier (matcher_name)) @function.method)
