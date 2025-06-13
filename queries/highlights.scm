@@ -1,5 +1,8 @@
 (comment) @comment
-(placeholder) @constant
+[
+  (environment_variable)
+  (placeholder)
+] @constant
 
 [
   (network_address)
