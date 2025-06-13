@@ -21,10 +21,10 @@
 #define ALIAS_COUNT 0
 #define TOKEN_COUNT 48
 #define EXTERNAL_TOKEN_COUNT 3
-#define FIELD_COUNT 3
+#define FIELD_COUNT 6
 #define MAX_ALIAS_SEQUENCE_LENGTH 5
 #define MAX_RESERVED_WORD_SET_SIZE 0
-#define PRODUCTION_ID_COUNT 9
+#define PRODUCTION_ID_COUNT 11
 #define SUPERTYPE_COUNT 0
 
 enum ts_symbol_identifiers {
@@ -72,9 +72,9 @@ enum ts_symbol_identifiers {
   sym_int_literal = 42,
   sym_duration_literal = 43,
   anon_sym_LT_LT = 44,
-  sym__heredoc_start = 45,
+  sym_heredoc_start = 45,
   sym_heredoc_body = 46,
-  sym__heredoc_end = 47,
+  sym_heredoc_end = 47,
   sym_source_file = 48,
   sym_global_options = 49,
   sym_snippet_definition = 50,
@@ -164,9 +164,9 @@ static const char * const ts_symbol_names[] = {
   [sym_int_literal] = "int_literal",
   [sym_duration_literal] = "duration_literal",
   [anon_sym_LT_LT] = "<<",
-  [sym__heredoc_start] = "_heredoc_start",
+  [sym_heredoc_start] = "heredoc_start",
   [sym_heredoc_body] = "heredoc_body",
-  [sym__heredoc_end] = "_heredoc_end",
+  [sym_heredoc_end] = "heredoc_end",
   [sym_source_file] = "source_file",
   [sym_global_options] = "global_options",
   [sym_snippet_definition] = "snippet_definition",
@@ -256,9 +256,9 @@ static const TSSymbol ts_symbol_map[] = {
   [sym_int_literal] = sym_int_literal,
   [sym_duration_literal] = sym_duration_literal,
   [anon_sym_LT_LT] = anon_sym_LT_LT,
-  [sym__heredoc_start] = sym__heredoc_start,
+  [sym_heredoc_start] = sym_heredoc_start,
   [sym_heredoc_body] = sym_heredoc_body,
-  [sym__heredoc_end] = sym__heredoc_end,
+  [sym_heredoc_end] = sym_heredoc_end,
   [sym_source_file] = sym_source_file,
   [sym_global_options] = sym_global_options,
   [sym_snippet_definition] = sym_snippet_definition,
@@ -483,16 +483,16 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = false,
   },
-  [sym__heredoc_start] = {
-    .visible = false,
+  [sym_heredoc_start] = {
+    .visible = true,
     .named = true,
   },
   [sym_heredoc_body] = {
     .visible = true,
     .named = true,
   },
-  [sym__heredoc_end] = {
-    .visible = false,
+  [sym_heredoc_end] = {
+    .visible = true,
     .named = true,
   },
   [sym_source_file] = {
@@ -663,15 +663,21 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
 
 enum ts_field_identifiers {
   field_body = 1,
-  field_expression = 2,
-  field_name = 3,
+  field_end_tag = 2,
+  field_expression = 3,
+  field_identifier = 4,
+  field_name = 5,
+  field_value = 6,
 };
 
 static const char * const ts_field_names[] = {
   [0] = NULL,
   [field_body] = "body",
+  [field_end_tag] = "end_tag",
   [field_expression] = "expression",
+  [field_identifier] = "identifier",
   [field_name] = "name",
+  [field_value] = "value",
 };
 
 static const TSMapSlice ts_field_map_slices[PRODUCTION_ID_COUNT] = {
@@ -681,8 +687,10 @@ static const TSMapSlice ts_field_map_slices[PRODUCTION_ID_COUNT] = {
   [4] = {.index = 5, .length = 1},
   [5] = {.index = 6, .length = 3},
   [6] = {.index = 9, .length = 1},
-  [7] = {.index = 10, .length = 1},
-  [8] = {.index = 11, .length = 1},
+  [7] = {.index = 10, .length = 2},
+  [8] = {.index = 12, .length = 1},
+  [9] = {.index = 13, .length = 3},
+  [10] = {.index = 16, .length = 1},
 };
 
 static const TSFieldMapEntry ts_field_map_entries[] = {
@@ -703,14 +711,21 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
   [9] =
     {field_body, 2},
   [10] =
+    {field_end_tag, 2},
+    {field_identifier, 1},
+  [12] =
     {field_expression, 1},
-  [11] =
+  [13] =
+    {field_end_tag, 3},
+    {field_identifier, 1},
+    {field_value, 2},
+  [16] =
     {field_expression, 2},
 };
 
 static const TSSymbol ts_alias_sequences[PRODUCTION_ID_COUNT][MAX_ALIAS_SEQUENCE_LENGTH] = {
   [0] = {0},
-  [7] = {
+  [8] = {
     [1] = sym__quoted_cel_expression,
   },
 };
@@ -12103,9 +12118,9 @@ static const uint16_t ts_parse_table[LARGE_STATE_COUNT][SYMBOL_COUNT] = {
     [sym_int_literal] = ACTIONS(1),
     [sym_duration_literal] = ACTIONS(1),
     [anon_sym_LT_LT] = ACTIONS(1),
-    [sym__heredoc_start] = ACTIONS(1),
+    [sym_heredoc_start] = ACTIONS(1),
     [sym_heredoc_body] = ACTIONS(1),
-    [sym__heredoc_end] = ACTIONS(1),
+    [sym_heredoc_end] = ACTIONS(1),
   },
   [STATE(1)] = {
     [sym_source_file] = STATE(138),
@@ -13944,7 +13959,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(412), 1,
       sym_heredoc_body,
     ACTIONS(414), 1,
-      sym__heredoc_end,
+      sym_heredoc_end,
     STATE(108), 1,
       aux_sym_heredoc_repeat1,
   [2318] = 4,
@@ -13962,7 +13977,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(420), 1,
       sym_heredoc_body,
     ACTIONS(422), 1,
-      sym__heredoc_end,
+      sym_heredoc_end,
     STATE(105), 1,
       aux_sym_heredoc_repeat1,
   [2344] = 4,
@@ -13971,7 +13986,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(424), 1,
       sym_heredoc_body,
     ACTIONS(427), 1,
-      sym__heredoc_end,
+      sym_heredoc_end,
     STATE(108), 1,
       aux_sym_heredoc_repeat1,
   [2357] = 4,
@@ -13989,7 +14004,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(433), 1,
       sym_heredoc_body,
     ACTIONS(435), 1,
-      sym__heredoc_end,
+      sym_heredoc_end,
     STATE(112), 1,
       aux_sym_heredoc_repeat1,
   [2383] = 4,
@@ -14007,7 +14022,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(412), 1,
       sym_heredoc_body,
     ACTIONS(439), 1,
-      sym__heredoc_end,
+      sym_heredoc_end,
     STATE(108), 1,
       aux_sym_heredoc_repeat1,
   [2409] = 4,
@@ -14084,7 +14099,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(3), 1,
       sym_comment,
     ACTIONS(463), 1,
-      sym__heredoc_start,
+      sym_heredoc_start,
   [2515] = 2,
     ACTIONS(25), 1,
       sym_comment,
@@ -14119,7 +14134,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(3), 1,
       sym_comment,
     ACTIONS(473), 1,
-      sym__heredoc_start,
+      sym_heredoc_start,
   [2564] = 2,
     ACTIONS(25), 1,
       sym_comment,
@@ -14357,8 +14372,8 @@ static const TSParseActionEntry ts_parse_actions[] = {
   [135] = {.entry = {.count = 2, .reusable = false}}, REDUCE(aux_sym_directive_repeat1, 2, 0, 0), SHIFT_REPEAT(125),
   [138] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_ip_address_or_cidr, 1, 0, 0),
   [140] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_ip_address_or_cidr, 1, 0, 0),
-  [142] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_heredoc, 4, 0, 0),
-  [144] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_heredoc, 4, 0, 0),
+  [142] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_heredoc, 4, 0, 9),
+  [144] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_heredoc, 4, 0, 9),
   [146] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_interpreted_string_literal, 3, 0, 0),
   [148] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_interpreted_string_literal, 3, 0, 0),
   [150] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_raw_string_literal, 3, 0, 0),
@@ -14373,8 +14388,8 @@ static const TSParseActionEntry ts_parse_actions[] = {
   [168] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_interpreted_string_literal, 2, 0, 0),
   [170] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_raw_string_literal, 2, 0, 0),
   [172] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_raw_string_literal, 2, 0, 0),
-  [174] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_heredoc, 3, 0, 0),
-  [176] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_heredoc, 3, 0, 0),
+  [174] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_heredoc, 3, 0, 7),
+  [176] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_heredoc, 3, 0, 7),
   [178] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_matcher_directive_name, 1, 0, 0),
   [180] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_matcher_directive_name, 1, 0, 0),
   [182] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_matcher_directive_name, 2, 0, 0),
@@ -14441,14 +14456,14 @@ static const TSParseActionEntry ts_parse_actions[] = {
   [315] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_site_definition, 2, 0, 1),
   [317] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_site_definition, 2, 0, 1),
   [319] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_site_address, 1, 0, 0),
-  [321] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_matcher_directive, 3, 0, 7),
-  [323] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_matcher_directive, 3, 0, 7),
+  [321] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_matcher_directive, 3, 0, 8),
+  [323] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_matcher_directive, 3, 0, 8),
   [325] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_matcher_directive, 3, 0, 1),
   [327] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_matcher_directive, 3, 0, 1),
-  [329] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_matcher_directive, 4, 0, 7),
-  [331] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_matcher_directive, 4, 0, 7),
-  [333] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_matcher_directive, 5, 0, 8),
-  [335] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_matcher_directive, 5, 0, 8),
+  [329] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_matcher_directive, 4, 0, 8),
+  [331] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_matcher_directive, 4, 0, 8),
+  [333] = {.entry = {.count = 1, .reusable = true}}, REDUCE(sym_matcher_directive, 5, 0, 10),
+  [335] = {.entry = {.count = 1, .reusable = false}}, REDUCE(sym_matcher_directive, 5, 0, 10),
   [337] = {.entry = {.count = 1, .reusable = true}}, SHIFT(28),
   [339] = {.entry = {.count = 1, .reusable = true}}, SHIFT(89),
   [341] = {.entry = {.count = 1, .reusable = true}}, SHIFT(97),
@@ -14523,29 +14538,29 @@ static const TSParseActionEntry ts_parse_actions[] = {
 };
 
 enum ts_external_scanner_symbol_identifiers {
-  ts_external_token__heredoc_start = 0,
+  ts_external_token_heredoc_start = 0,
   ts_external_token_heredoc_body = 1,
-  ts_external_token__heredoc_end = 2,
+  ts_external_token_heredoc_end = 2,
 };
 
 static const TSSymbol ts_external_scanner_symbol_map[EXTERNAL_TOKEN_COUNT] = {
-  [ts_external_token__heredoc_start] = sym__heredoc_start,
+  [ts_external_token_heredoc_start] = sym_heredoc_start,
   [ts_external_token_heredoc_body] = sym_heredoc_body,
-  [ts_external_token__heredoc_end] = sym__heredoc_end,
+  [ts_external_token_heredoc_end] = sym_heredoc_end,
 };
 
 static const bool ts_external_scanner_states[4][EXTERNAL_TOKEN_COUNT] = {
   [1] = {
-    [ts_external_token__heredoc_start] = true,
+    [ts_external_token_heredoc_start] = true,
     [ts_external_token_heredoc_body] = true,
-    [ts_external_token__heredoc_end] = true,
+    [ts_external_token_heredoc_end] = true,
   },
   [2] = {
     [ts_external_token_heredoc_body] = true,
-    [ts_external_token__heredoc_end] = true,
+    [ts_external_token_heredoc_end] = true,
   },
   [3] = {
-    [ts_external_token__heredoc_start] = true,
+    [ts_external_token_heredoc_start] = true,
   },
 };
 

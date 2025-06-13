@@ -13,11 +13,13 @@ EOF
 (source_file
 	(sites
 		(single_site
-			(site_address)
-			(directive
-				(directive_name)
+			name: (site_address)
+			body: (directive
+				name: (directive_name)
 				(heredoc
-					(heredoc_body))))))
+					identifier: (heredoc_start)
+					value: (heredoc_body)
+					end_tag: (heredoc_end))))))
 
 =====================
 Heredoc in Site-block
@@ -34,9 +36,11 @@ EOF
 (source_file
 	(sites
 		(site_definition
-			(site_address)
+			name: (site_address)
 			(block
-				(directive
-					(directive_name)
+				body: (directive
+					name: (directive_name)
 					(heredoc
-						(heredoc_body)))))))
+						identifier: (heredoc_start)
+						value: (heredoc_body)
+						end_tag: (heredoc_end)))))))

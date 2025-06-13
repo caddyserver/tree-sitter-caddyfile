@@ -113,16 +113,37 @@
 	{
 		"type": "heredoc",
 		"named": true,
-		"fields": {},
-		"children": {
-			"multiple": true,
-			"required": false,
-			"types": [
-				{
-					"type": "heredoc_body",
-					"named": true
-				}
-			]
+		"fields": {
+			"end_tag": {
+				"multiple": false,
+				"required": true,
+				"types": [
+					{
+						"type": "heredoc_end",
+						"named": true
+					}
+				]
+			},
+			"identifier": {
+				"multiple": false,
+				"required": true,
+				"types": [
+					{
+						"type": "heredoc_start",
+						"named": true
+					}
+				]
+			},
+			"value": {
+				"multiple": true,
+				"required": false,
+				"types": [
+					{
+						"type": "heredoc_body",
+						"named": true
+					}
+				]
+			}
 		}
 	},
 	{
@@ -518,6 +539,14 @@
 	},
 	{
 		"type": "heredoc_body",
+		"named": true
+	},
+	{
+		"type": "heredoc_end",
+		"named": true
+	},
+	{
+		"type": "heredoc_start",
 		"named": true
 	},
 	{

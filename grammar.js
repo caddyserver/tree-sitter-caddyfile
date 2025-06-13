@@ -73,7 +73,7 @@ module.exports = grammar({
 
 	word: $ => $.argument,
 
-	externals: $ => [$._heredoc_start, $.heredoc_body, $._heredoc_end],
+	externals: $ => [$.heredoc_start, $.heredoc_body, $.heredoc_end],
 
 	rules: {
 		//
@@ -343,7 +343,8 @@ module.exports = grammar({
 		// Heredocs (implementation is in `src/scanner.c`)
 		//
 
-		heredoc: $ => seq('<<', $._heredoc_start, optional(repeat($.heredoc_body)), $._heredoc_end),
+		// TODO: what happens if there is a leading `\` (heredoc escape)?
+		heredoc: $ => seq('<<', field('identifier', $.heredoc_start), optional(field('value', repeat($.heredoc_body))), field('end_tag', $.heredoc_end)),
 	},
 });
 
