@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Code checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Setup tree-sitter
         uses: tree-sitter/setup-action/cli@c4c258862a6a7e43a7aef152256bbf659972c408 # v2
