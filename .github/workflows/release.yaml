@@ -31,7 +31,7 @@ jobs:
       generate: true
 
   pypi:
-    uses: tree-sitter/workflows/.github/workflows/package-pypi.yml@5369718a08f77b4137e79f309a246e328e9459ad # main
+    uses: tree-sitter/workflows/.github/workflows/package-pypi.yml@67eb38f65e3a08dc2851fa8575ced44ff2857705 # main
     secrets:
       PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
     with:
