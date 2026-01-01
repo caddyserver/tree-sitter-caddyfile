@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
       - name: Setup tree-sitter
-        uses: tree-sitter/setup-action/cli@c4c258862a6a7e43a7aef152256bbf659972c408 # v2
+        uses: tree-sitter/setup-action/cli@eeb902ac2f1be576edc296309872cf476a209b7f # v2
 
       - name: Run tests
         uses: tree-sitter/parser-test-action@341b8ce5a8007771ff1985b30c906b86500c7cee # v2
