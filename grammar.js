@@ -25,9 +25,9 @@ const PORT_REGEX = /[0-9]{1,5}/;
 // syntax correctly. The grammar will compile but it won't match correctly.
 const tld = choice(/[a-z][a-z]+/, /xn--[a-z0-9]+/);
 
-// Must start with `a-z`, after the first character `0-9` and `-` are allowed,
-// cannot end with a `-`.
-const DOMAIN_SECTION_REGEX = /[a-z][a-z0-9\-]*[a-z0-9]+/;
+// Must start with `a-z`, after the first character `0-9`, `-`, and `_` are allowed,
+// cannot end with a `-` or `_`.
+const DOMAIN_SECTION_REGEX = /[a-z][a-z0-9\-_]*[a-z0-9]+/;
 
 // Hostname regex, allows:
 // - Domains (example.com)
