@@ -13,3 +13,39 @@ Snippet
 		(snippet_name)
 		(block
 			(comment))))
+
+=====================
+Snippet After Site
+=====================
+
+api.localhost {
+	respond "Hello from Caddy!"
+}
+(snippet) {
+	respond "Yahaha! You found {args[0]}!"
+}
+example.localhost {
+	import snippet "Example A"
+}
+---
+
+(source_file
+	(site_definition
+		(site_address)
+		(block
+			(directive
+				(directive_name)
+				(interpreted_string_literal))))
+	(snippet_definition
+		(snippet_name)
+		(block
+			(directive
+				(directive_name)
+				(interpreted_string_literal))))
+	(site_definition
+		(site_address)
+		(block
+			(directive
+				(directive_name)
+				(argument)
+				(interpreted_string_literal)))))

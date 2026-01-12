@@ -89,7 +89,13 @@ module.exports = grammar({
 				repeat(choice($.snippet_definition, $.named_route)),
 
 				// Allow site definitions, either a single site or multiple site blocks.
-				optional($.sites),
+				// Snippets / named routes may be interspersed with sites
+				optional(
+					choice(
+						seq($.single_site, repeat(choice($.snippet_definition, $.named_route))),
+						seq($.site_definition, repeat(choice($.snippet_definition, $.site_definition, $.named_route))),
+					),
+				),
 			),
 
 		// Global options is a special block that only allows the use of directives.
@@ -321,8 +327,6 @@ module.exports = grammar({
 		block: $ => seq('{', token.immediate(NEW_LINE_REGEX), field('body', repeat($._definition)), '}'),
 
 		site_definition: $ => seq(field('name', commaSep1($.site_address)), $.block),
-
-		sites: $ => choice($.single_site, repeat1($.site_definition)),
 
 		single_site: $ => seq(field('name', commaSep1($.site_address)), field('body', repeat($._definition))),
 

@@ -9,13 +9,12 @@ reverse_proxy * 127.0.0.1
 ---
 
 (source_file
-	(sites
-		(single_site
-			name: (site_address)
-			body: (directive
-				name: (directive_name)
-				(matcher)
-				(network_address)))))
+	(single_site
+		name: (site_address)
+		body: (directive
+			name: (directive_name)
+			(matcher)
+			(network_address))))
 
 ============
 Path Matcher
@@ -28,14 +27,13 @@ reverse_proxy /path 127.0.0.1
 ---
 
 (source_file
-	(sites
-		(single_site
-			name: (site_address)
-			body: (directive
-				name: (directive_name)
-				(matcher
-					(path_matcher))
-				(network_address)))))
+	(single_site
+		name: (site_address)
+		body: (directive
+			name: (directive_name)
+			(matcher
+				(path_matcher))
+			(network_address))))
 
 =====================
 Wildcard Path Matcher
@@ -48,11 +46,10 @@ reverse_proxy /path* 127.0.0.1
 ---
 
 (source_file
-	(sites
-		(single_site
-			name: (site_address)
-			body: (directive
-				name: (directive_name)
-				(matcher
-					(path_matcher))
-				(network_address)))))
+	(single_site
+		name: (site_address)
+		body: (directive
+			name: (directive_name)
+			(matcher
+				(path_matcher))
+			(network_address))))
