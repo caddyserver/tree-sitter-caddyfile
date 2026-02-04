@@ -29,10 +29,9 @@ root * /var/www
 				(directive
 					(directive_name)
 					(network_address)))))
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(matcher)
-				(argument)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(matcher)
+			(argument))))

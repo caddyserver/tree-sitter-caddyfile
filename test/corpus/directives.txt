@@ -9,13 +9,12 @@ root * /var/www/
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(matcher)
-				(argument)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(matcher)
+			(argument))))
 
 ===========================================
 Single-site with Multiple Wildcard Matchers
@@ -28,12 +27,11 @@ path *.txt *.md *.mdown /site/*
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(argument)
-				(argument)
-				(argument)
-				(argument)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(argument)
+			(argument)
+			(argument)
+			(argument))))

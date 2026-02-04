@@ -11,21 +11,20 @@ reverse_proxy @test 127.0.0.1
 ---
 
 (source_file
-	(sites
-		(single_site
-			name: (site_address)
-			body: (named_matcher
+	(single_site
+		name: (site_address)
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				name: (matcher_directive_name)
+				(network_address)))
+		body: (directive
+			name: (directive_name)
+			(matcher
 				(matcher_identifier
-					name: (matcher_name))
-				(matcher_directive
-					name: (matcher_directive_name)
-					(network_address)))
-			body: (directive
-				name: (directive_name)
-				(matcher
-					(matcher_identifier
-						name: (matcher_name)))
-				(network_address)))))
+					name: (matcher_name)))
+			(network_address))))
 
 ===================
 Named Matcher Block
@@ -42,22 +41,21 @@ reverse_proxy @test 127.0.0.1
 ---
 
 (source_file
-	(sites
-		(single_site
-			name: (site_address)
-			body: (named_matcher
+	(single_site
+		name: (site_address)
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_block
+				body: (matcher_directive
+					name: (matcher_directive_name)
+					(network_address))))
+		body: (directive
+			name: (directive_name)
+			(matcher
 				(matcher_identifier
-					name: (matcher_name))
-				(matcher_block
-					body: (matcher_directive
-						name: (matcher_directive_name)
-						(network_address))))
-			body: (directive
-				name: (directive_name)
-				(matcher
-					(matcher_identifier
-						name: (matcher_name)))
-				(network_address)))))
+					name: (matcher_name)))
+			(network_address))))
 
 ===========
 Not Matcher
@@ -72,21 +70,20 @@ reverse_proxy @test 127.0.0.1
 ---
 
 (source_file
-	(sites
-		(single_site
-			name: (site_address)
-			body: (named_matcher
+	(single_site
+		name: (site_address)
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				name: (matcher_directive_name)
+				(network_address)))
+		body: (directive
+			name: (directive_name)
+			(matcher
 				(matcher_identifier
-					name: (matcher_name))
-				(matcher_directive
-					name: (matcher_directive_name)
-					(network_address)))
-			body: (directive
-				name: (directive_name)
-				(matcher
-					(matcher_identifier
-						name: (matcher_name)))
-				(network_address)))))
+					name: (matcher_name)))
+			(network_address))))
 
 ===========
 CEL Matcher
@@ -103,30 +100,29 @@ reverse_proxy @test 127.0.0.1
 ---
 
 (source_file
-	(sites
-		(single_site
-			name: (site_address)
-			body: (named_matcher
+	(single_site
+		name: (site_address)
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				expression: (cel_expression)))
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				expression: (cel_expression)))
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				expression: (cel_expression)))
+		body: (directive
+			name: (directive_name)
+			(matcher
 				(matcher_identifier
-					name: (matcher_name))
-				(matcher_directive
-					expression: (cel_expression)))
-			body: (named_matcher
-				(matcher_identifier
-					name: (matcher_name))
-				(matcher_directive
-					expression: (cel_expression)))
-			body: (named_matcher
-				(matcher_identifier
-					name: (matcher_name))
-				(matcher_directive
-					expression: (cel_expression)))
-			body: (directive
-				name: (directive_name)
-				(matcher
-					(matcher_identifier
-						name: (matcher_name)))
-				(network_address)))))
+					name: (matcher_name)))
+			(network_address))))
 
 =========================================
 Matcher Directive with Multiple Arguments
@@ -141,23 +137,22 @@ reverse_proxy @private 127.0.0.1
 ---
 
 (source_file
-	(sites
-		(single_site
-			name: (site_address)
-			body: (named_matcher
+	(single_site
+		name: (site_address)
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				name: (matcher_directive_name)
+				(ip_address_or_cidr)
+				(ip_address_or_cidr)
+				(ip_address_or_cidr)
+				(ip_address_or_cidr)
+				(ip_address_or_cidr)
+				(ip_address_or_cidr)))
+		body: (directive
+			name: (directive_name)
+			(matcher
 				(matcher_identifier
-					name: (matcher_name))
-				(matcher_directive
-					name: (matcher_directive_name)
-					(ip_address_or_cidr)
-					(ip_address_or_cidr)
-					(ip_address_or_cidr)
-					(ip_address_or_cidr)
-					(ip_address_or_cidr)
-					(ip_address_or_cidr)))
-			body: (directive
-				name: (directive_name)
-				(matcher
-					(matcher_identifier
-						name: (matcher_name)))
-				(network_address)))))
+					name: (matcher_name)))
+			(network_address))))
