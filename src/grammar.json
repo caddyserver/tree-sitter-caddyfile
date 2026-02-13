@@ -1,7 +1,6 @@
 {
 	"$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/grammar.schema.json",
 	"name": "caddyfile",
-	"word": "argument",
 	"rules": {
 		"source_file": {
 			"type": "SEQ",
@@ -1245,8 +1244,17 @@
 			}
 		},
 		"argument": {
-			"type": "PATTERN",
-			"value": "[a-zA-Z\\-_+.\\\\\\/*]([a-zA-Z\\-_+.\\\\\\/*0-9]*)"
+			"type": "CHOICE",
+			"members": [
+				{
+					"type": "PATTERN",
+					"value": "[a-zA-Z\\-_+.\\\\\\/*]([a-zA-Z\\-_+.\\\\\\/*0-9@]*)"
+				},
+				{
+					"type": "PATTERN",
+					"value": "@[a-zA-Z\\-_+.\\\\\\/*]*@[a-zA-Z\\-_+.\\\\\\/*]*"
+				}
+			]
 		},
 		"status_code_fallback": {
 			"type": "TOKEN",

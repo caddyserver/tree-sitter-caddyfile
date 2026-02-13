@@ -1,5 +1,10 @@
 [
 	{
+		"type": "argument",
+		"named": true,
+		"fields": {}
+	},
+	{
 		"type": "block",
 		"named": true,
 		"fields": {
@@ -527,10 +532,6 @@
 	{
 		"type": "`",
 		"named": false
-	},
-	{
-		"type": "argument",
-		"named": true
 	},
 	{
 		"type": "comment",

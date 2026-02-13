@@ -83,8 +83,6 @@ module.exports = grammar({
 
 	extras: $ => [$.comment, /\s/],
 
-	word: $ => $.argument,
-
 	externals: $ => [$.heredoc_start, $.heredoc_body, $.heredoc_end],
 
 	rules: {
@@ -228,7 +226,15 @@ module.exports = grammar({
 		comment: _ => token(seq('#', /.*/)),
 
 		// Argument is pretty much anything that isn't a matcher
-		argument: _ => /[a-zA-Z\-_+.\\\/*]([a-zA-Z\-_+.\\\/*0-9]*)/,
+		argument: _ =>
+			choice(
+				// Normal arguments without @ or starting with non-@ characters
+				/[a-zA-Z\-_+.\\\/*]([a-zA-Z\-_+.\\\/*0-9@]*)/,
+
+				// Arguments starting with @ that contain more @ characters
+				// (like @longhorn-ui@/share/share/lib/longhorn-ui)
+				/@[a-zA-Z\-_+.\\\/*]*@[a-zA-Z\-_+.\\\/*]*/,
+			),
 
 		// Fallback status code, primarily used with `try_files` as the last argument.
 		status_code_fallback: _ => token(seq('=', /[0-9]{3}/)),
@@ -267,6 +273,7 @@ module.exports = grammar({
 		// https://caddyserver.com/docs/caddyfile/matchers#named-matchers
 		matcher_name: _ => /[a-zA-Z0-9\-_]+/,
 		matcher_identifier: $ => seq('@', field('name', $.matcher_name)),
+		// matcher_identifier: _ => token(prec(1, seq('@', field('name', /[a-zA-Z0-9\-_]+/)))),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#expression
 		_bare_cel_expression: $ => repeat1($._bare_cel_expression_content),
