@@ -22,3 +22,25 @@ root * /var/www
 				(directive_name)
 				(matcher)
 				(argument)))))
+
+====================
+Status Code Fallback
+====================
+
+example.com
+
+try_files {path} {path}/ /index.html =404
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(placeholder)
+				(placeholder)
+				(argument)
+				(argument)
+				(status_code_fallback)))))

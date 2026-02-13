@@ -58,7 +58,19 @@ const environmentVariable = token(
 );
 
 const subdirectiveFields = $ => [
-	repeat(choice($.network_address, $.environment_variable, $.placeholder, $._string_literal, $.duration_literal, $.int_literal, $.argument, $.heredoc)),
+	repeat(
+		choice(
+			$.network_address,
+			$.environment_variable,
+			$.placeholder,
+			$._string_literal,
+			$.duration_literal,
+			$.int_literal,
+			$.status_code_fallback,
+			$.argument,
+			$.heredoc,
+		),
+	),
 	choice($.block, token.immediate(NEW_LINE_REGEX)),
 ];
 
@@ -217,6 +229,9 @@ module.exports = grammar({
 
 		// Argument is pretty much anything that isn't a matcher
 		argument: _ => /[a-zA-Z\-_+.\\\/*]([a-zA-Z\-_+.\\\/*0-9]*)/,
+
+		// Fallback status code, primarily used with `try_files` as the last argument.
+		status_code_fallback: _ => token(seq('=', /[0-9]{3}/)),
 
 		// Placeholder is used for environment variables or runtime value substitution
 		placeholder: $ => $._placeholder,

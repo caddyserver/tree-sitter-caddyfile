@@ -1248,6 +1248,22 @@
 			"type": "PATTERN",
 			"value": "[a-zA-Z\\-_+.\\\\\\/*]([a-zA-Z\\-_+.\\\\\\/*0-9]*)"
 		},
+		"status_code_fallback": {
+			"type": "TOKEN",
+			"content": {
+				"type": "SEQ",
+				"members": [
+					{
+						"type": "STRING",
+						"value": "="
+					},
+					{
+						"type": "PATTERN",
+						"value": "[0-9]{3}"
+					}
+				]
+			}
+		},
 		"placeholder": {
 			"type": "SYMBOL",
 			"name": "_placeholder"
@@ -1430,6 +1446,10 @@
 							{
 								"type": "SYMBOL",
 								"name": "int_literal"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "status_code_fallback"
 							},
 							{
 								"type": "SYMBOL",

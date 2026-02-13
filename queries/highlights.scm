@@ -41,6 +41,7 @@
 [
   (duration_literal)
   (int_literal)
+  (status_code_fallback)
 ] @number
 
 [
