@@ -37,8 +37,8 @@
             emscripten
             gcc
             go
-            nodejs
-            nodePackages.node-gyp
+            nodejs_22
+            nodejs_22.pkgs.node-gyp
             python3
             rustc
           ];
