@@ -21,13 +21,14 @@ root * /var/www
 Single Site Block with multiple addresses
 =========================================
 
-http://example.com:8080, https://fake.org:8443, fake.co.uk, {$ENV_SITE}
+http://example.com:8080, https://fake.org:8443, fake.co.uk, {$ENV_SITE}, :{$PORT}
 
 ---
 
 (source_file
 	(sites
 		(single_site
+			(site_address)
 			(site_address)
 			(site_address)
 			(site_address)

@@ -178,6 +178,9 @@ module.exports = grammar({
 				// Bare port
 				token(seq(':', PORT_REGEX)),
 
+				// `:{$ENV_VAR}`
+				seq(optional(':'), $._environment_variable),
+
 				// Environment variable.
 				//
 				// According to the Caddy docs, placeholders cannot be used in addresses,
