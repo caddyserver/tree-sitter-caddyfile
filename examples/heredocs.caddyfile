@@ -1,0 +1,24 @@
+example.com
+
+respond <<HTML
+<html>
+	<body>
+	</body>
+</html>
+HTML
+
+respond <<CSS
+.hello {
+	content: 'world';
+}
+CSS
+
+respond <<GO
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello, world!")
+}
+GO
