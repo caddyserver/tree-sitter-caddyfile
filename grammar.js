@@ -219,6 +219,23 @@ module.exports = grammar({
 			),
 
 		//
+		// Literals
+		//
+
+		_string_literal: $ => choice($.raw_string_literal, $.interpreted_string_literal),
+
+		raw_string_literal: $ => seq('`', repeat($._raw_string_literal_basic_content), token.immediate('`')),
+		_raw_string_literal_basic_content: _ => token.immediate(prec(1, /[^`\n]+/)),
+
+		interpreted_string_literal: $ => seq('"', repeat(choice($._interpreted_string_literal_basic_content, $.escape_sequence)), token.immediate('"')),
+		_interpreted_string_literal_basic_content: _ => token.immediate(prec(1, /[^"\n\\]+/)),
+
+		escape_sequence: _ => token.immediate(seq('\\', choice(/[^xuU]/, /\d{2,3}/, /x[0-9a-fA-F]{2,}/, /u[0-9a-fA-F]{4}/, /U[0-9a-fA-F]{8}/))),
+
+		int_literal: _ => token(choice('0', seq(/[1-9]/, repeat(/[0-9]/)))),
+		duration_literal: _ => token(seq(choice('0', seq(/[1-9]/, repeat(/[0-9]/))), /(ns|us|µs|ms|s|m|h|d)/)),
+
+		//
 		// Tokens
 		//
 
@@ -229,11 +246,11 @@ module.exports = grammar({
 		argument: _ =>
 			choice(
 				// Normal arguments without @ or starting with non-@ characters
-				/[a-zA-Z\-_+.\\\/*:]([a-zA-Z\-_+.\\\/*:0-9@]*)/,
+				/[a-zA-Z\-_+.\\\/*:$0-9]([a-zA-Z\-_+.\\\/*:$0-9@]*)/,
 
 				// Arguments starting with @ that contain more @ characters
 				// (like @longhorn-ui@/share/share/lib/longhorn-ui)
-				/@[a-zA-Z\-_+.\\\/*:]*@[a-zA-Z\-_+.\\\/*:0-9@]*/,
+				/@[a-zA-Z\-_+.\\\/*:$0-9]*@[a-zA-Z\-_+.\\\/*:$0-9@]*/,
 			),
 
 		// Fallback status code, primarily used with `try_files` as the last argument.
@@ -350,23 +367,6 @@ module.exports = grammar({
 		sites: $ => choice($.single_site, repeat1($.site_definition)),
 
 		single_site: $ => seq(field('name', commaSep1($.site_address)), field('body', repeat($._definition))),
-
-		//
-		// Literals
-		//
-
-		_string_literal: $ => choice($.raw_string_literal, $.interpreted_string_literal),
-
-		raw_string_literal: $ => seq('`', repeat($._raw_string_literal_basic_content), token.immediate('`')),
-		_raw_string_literal_basic_content: _ => token.immediate(prec(1, /[^`\n]+/)),
-
-		interpreted_string_literal: $ => seq('"', repeat(choice($._interpreted_string_literal_basic_content, $.escape_sequence)), token.immediate('"')),
-		_interpreted_string_literal_basic_content: _ => token.immediate(prec(1, /[^"\n\\]+/)),
-
-		escape_sequence: _ => token.immediate(seq('\\', choice(/[^xuU]/, /\d{2,3}/, /x[0-9a-fA-F]{2,}/, /u[0-9a-fA-F]{4}/, /U[0-9a-fA-F]{8}/))),
-
-		int_literal: _ => token(choice('0', seq(/[1-9]/, repeat(/[0-9]/)))),
-		duration_literal: _ => token(seq(choice('0', seq(/[1-9]/, repeat(/[0-9]/))), /(ns|us|µs|ms|s|m|h|d)/)),
 
 		//
 		// Heredocs (implementation is in `src/scanner.c`)

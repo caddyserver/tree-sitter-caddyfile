@@ -81,3 +81,50 @@ reverse_proxy some_other_host:1234
 			(directive
 				(directive_name)
 				(argument)))))
+
+========================
+Hashed password argument
+========================
+
+example.com
+
+basic_auth {
+    username $2a$14$HAb527dB7kq9wMpYa9Ff7.LWvUQAUEeDmXh.WDudhwcJ318l1LufO
+}
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(block
+					(directive
+						(directive_name)
+						(argument)))))))
+
+====================
+MAC address argument
+====================
+
+example.com
+
+exec wakeonlan 78:f4:53:67:7a:a9 {
+    pass_thru
+}
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(argument)
+				(argument)
+				(block
+					(directive
+						(directive_name)))))))
