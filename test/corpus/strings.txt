@@ -63,3 +63,21 @@ root * @longhorn-ui@/share/share/lib/longhorn-ui
 				(directive_name)
 				(matcher)
 				(argument)))))
+
+=======================
+Domain with Underscores
+=======================
+
+example.com
+
+reverse_proxy some_other_host:1234
+
+---
+
+(source_file
+	(sites
+		(single_site
+			(site_address)
+			(directive
+				(directive_name)
+				(argument)))))

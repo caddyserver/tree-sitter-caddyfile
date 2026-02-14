@@ -229,11 +229,11 @@ module.exports = grammar({
 		argument: _ =>
 			choice(
 				// Normal arguments without @ or starting with non-@ characters
-				/[a-zA-Z\-_+.\\\/*]([a-zA-Z\-_+.\\\/*0-9@]*)/,
+				/[a-zA-Z\-_+.\\\/*:]([a-zA-Z\-_+.\\\/*:0-9@]*)/,
 
 				// Arguments starting with @ that contain more @ characters
 				// (like @longhorn-ui@/share/share/lib/longhorn-ui)
-				/@[a-zA-Z\-_+.\\\/*]*@[a-zA-Z\-_+.\\\/*]*/,
+				/@[a-zA-Z\-_+.\\\/*:]*@[a-zA-Z\-_+.\\\/*:0-9@]*/,
 			),
 
 		// Fallback status code, primarily used with `try_files` as the last argument.
