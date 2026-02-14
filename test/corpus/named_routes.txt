@@ -13,3 +13,39 @@ Named Route
 		(named_route_identifier)
 		(block
 			(comment))))
+
+===============================
+Named Route between Site blocks
+===============================
+
+example.com {
+	invoke snippet
+}
+
+&(named_route) {
+	# this is a re-usable named route
+}
+
+example.net {
+	invoke snippet
+}
+
+---
+
+(source_file
+	(site_block
+		(site_address)
+		(block
+			(directive
+				(directive_name)
+				(argument))))
+	(named_route
+		(named_route_identifier)
+		(block
+			(comment)))
+	(site_block
+		(site_address)
+		(block
+			(directive
+				(directive_name)
+				(argument)))))

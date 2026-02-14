@@ -13,3 +13,39 @@ Snippet
 		(snippet_name)
 		(block
 			(comment))))
+
+===========================
+Snippet between Site blocks
+===========================
+
+example.com {
+	import snippet
+}
+
+(snippet) {
+	# this is a reusable snippet
+}
+
+example.net {
+	import snippet
+}
+
+---
+
+(source_file
+	(site_block
+		(site_address)
+		(block
+			(directive
+				(directive_name)
+				(argument))))
+	(snippet_definition
+		(snippet_name)
+		(block
+			(comment)))
+	(site_block
+		(site_address)
+		(block
+			(directive
+				(directive_name)
+				(argument)))))

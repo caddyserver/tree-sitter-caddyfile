@@ -9,13 +9,12 @@ redir https://example.com/#/about 302
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(network_address)
-				(int_literal)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(network_address)
+			(int_literal))))
 
 ==============================
 Single Site Block with Comment
@@ -28,10 +27,9 @@ example.com
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)))
-			(comment))
+	(single_site
+		(site_address))
+		(comment))
 
 =================================
 Multiple Site Blocks with Comment
@@ -52,15 +50,14 @@ foobar.com {
 ---
 
 (source_file
-	(sites
-		(site_definition
-			(site_address)
-			(block
-				(comment)))
-		(site_definition
-			(site_address)
-			(block
-				(comment))))
+	(site_block
+		(site_address)
+		(block
+			(comment)))
+	(site_block
+		(site_address)
+		(block
+			(comment)))
 	(comment)
 	(comment)
 	(comment))

@@ -37,8 +37,42 @@
 					"type": "CHOICE",
 					"members": [
 						{
-							"type": "SYMBOL",
-							"name": "sites"
+							"type": "CHOICE",
+							"members": [
+								{
+									"type": "SYMBOL",
+									"name": "single_site"
+								},
+								{
+									"type": "SEQ",
+									"members": [
+										{
+											"type": "SYMBOL",
+											"name": "site_block"
+										},
+										{
+											"type": "REPEAT",
+											"content": {
+												"type": "CHOICE",
+												"members": [
+													{
+														"type": "SYMBOL",
+														"name": "site_block"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "snippet_definition"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "named_route"
+													}
+												]
+											}
+										}
+									]
+								}
+							]
 						},
 						{
 							"type": "BLANK"
@@ -2089,63 +2123,6 @@
 				}
 			]
 		},
-		"site_definition": {
-			"type": "SEQ",
-			"members": [
-				{
-					"type": "FIELD",
-					"name": "name",
-					"content": {
-						"type": "SEQ",
-						"members": [
-							{
-								"type": "SYMBOL",
-								"name": "site_address"
-							},
-							{
-								"type": "REPEAT",
-								"content": {
-									"type": "SEQ",
-									"members": [
-										{
-											"type": "IMMEDIATE_TOKEN",
-											"content": {
-												"type": "PATTERN",
-												"value": ", "
-											}
-										},
-										{
-											"type": "SYMBOL",
-											"name": "site_address"
-										}
-									]
-								}
-							}
-						]
-					}
-				},
-				{
-					"type": "SYMBOL",
-					"name": "block"
-				}
-			]
-		},
-		"sites": {
-			"type": "CHOICE",
-			"members": [
-				{
-					"type": "SYMBOL",
-					"name": "single_site"
-				},
-				{
-					"type": "REPEAT1",
-					"content": {
-						"type": "SYMBOL",
-						"name": "site_definition"
-					}
-				}
-			]
-		},
 		"single_site": {
 			"type": "SEQ",
 			"members": [
@@ -2191,6 +2168,47 @@
 							"name": "_definition"
 						}
 					}
+				}
+			]
+		},
+		"site_block": {
+			"type": "SEQ",
+			"members": [
+				{
+					"type": "FIELD",
+					"name": "name",
+					"content": {
+						"type": "SEQ",
+						"members": [
+							{
+								"type": "SYMBOL",
+								"name": "site_address"
+							},
+							{
+								"type": "REPEAT",
+								"content": {
+									"type": "SEQ",
+									"members": [
+										{
+											"type": "IMMEDIATE_TOKEN",
+											"content": {
+												"type": "PATTERN",
+												"value": ", "
+											}
+										},
+										{
+											"type": "SYMBOL",
+											"name": "site_address"
+										}
+									]
+								}
+							}
+						]
+					}
+				},
+				{
+					"type": "SYMBOL",
+					"name": "block"
 				}
 			]
 		},

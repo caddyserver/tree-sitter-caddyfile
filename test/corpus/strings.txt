@@ -11,17 +11,16 @@ root * /var/www
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(interpreted_string_literal
-				(escape_sequence)))
-			(directive
-				(directive_name)
-				(matcher)
-				(argument)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(interpreted_string_literal
+			(escape_sequence)))
+		(directive
+			(directive_name)
+			(matcher)
+			(argument))))
 
 ====================
 Status Code Fallback
@@ -34,16 +33,15 @@ try_files {path} {path}/ /index.html =404
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(placeholder)
-				(placeholder)
-				(argument)
-				(argument)
-				(status_code_fallback)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(placeholder)
+			(placeholder)
+			(argument)
+			(argument)
+			(status_code_fallback))))
 
 ==================
 replaceVars Syntax
@@ -56,13 +54,12 @@ root * @longhorn-ui@/share/share/lib/longhorn-ui
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(matcher)
-				(argument)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(matcher)
+			(argument))))
 
 =======================
 Domain with Underscores
@@ -75,12 +72,11 @@ reverse_proxy some_other_host:1234
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(argument)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(argument))))
 
 ========================
 Hashed password argument
@@ -95,15 +91,14 @@ basic_auth {
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(block
-					(directive
-						(directive_name)
-						(argument)))))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(block
+				(directive
+					(directive_name)
+					(argument))))))
 
 ====================
 MAC address argument
@@ -118,13 +113,12 @@ exec wakeonlan 78:f4:53:67:7a:a9 {
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(argument)
-				(argument)
-				(block
-					(directive
-						(directive_name)))))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(argument)
+			(argument)
+			(block
+				(directive
+					(directive_name))))))

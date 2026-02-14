@@ -95,11 +95,13 @@ module.exports = grammar({
 				// Allow a single "global options" block at the beginning of the file.
 				optional($.global_options),
 
-				// Allow multiple snippet definitions and/or named routes.
+				// Allow any snippet definitions and/or named routes before any
+				// site block has been declared.
 				repeat(choice($.snippet_definition, $.named_route)),
 
-				// Allow site definitions, either a single site or multiple site blocks.
-				optional($.sites),
+				// Once a single site is started, snippets, named routes, and
+				// other site blocks can no longer be declared.
+				optional(choice($.single_site, seq($.site_block, repeat(choice($.site_block, $.snippet_definition, $.named_route))))),
 			),
 
 		// Global options is a special block that only allows the use of directives.
@@ -362,11 +364,9 @@ module.exports = grammar({
 		// Block is a site block that is allowed to define directives and named matchers.
 		block: $ => seq('{', token.immediate(NEW_LINE_REGEX), field('body', repeat($._definition)), '}'),
 
-		site_definition: $ => seq(field('name', commaSep1($.site_address)), $.block),
-
-		sites: $ => choice($.single_site, repeat1($.site_definition)),
-
 		single_site: $ => seq(field('name', commaSep1($.site_address)), field('body', repeat($._definition))),
+
+		site_block: $ => seq(field('name', commaSep1($.site_address)), $.block),
 
 		//
 		// Heredocs (implementation is in `src/scanner.c`)

@@ -9,13 +9,12 @@ root * {args[0]}
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(matcher)
-				(placeholder)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(matcher)
+			(placeholder))))
 
 ========================
 Nested Field Placeholder
@@ -28,13 +27,12 @@ root * {something.args[0]}
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(matcher)
-				(placeholder)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(matcher)
+			(placeholder))))
 
 =====================================================
 Field Placeholder with nested Environment Placeholder
@@ -47,10 +45,9 @@ dns cloudflare {file.{$CF_API_TOKEN_FILE}}
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(argument)
-				(placeholder)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(argument)
+			(placeholder))))

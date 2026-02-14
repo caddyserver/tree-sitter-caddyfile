@@ -411,7 +411,7 @@
 		"fields": {}
 	},
 	{
-		"type": "site_definition",
+		"type": "site_block",
 		"named": true,
 		"fields": {
 			"name": {
@@ -431,25 +431,6 @@
 			"types": [
 				{
 					"type": "block",
-					"named": true
-				}
-			]
-		}
-	},
-	{
-		"type": "sites",
-		"named": true,
-		"fields": {},
-		"children": {
-			"multiple": true,
-			"required": true,
-			"types": [
-				{
-					"type": "single_site",
-					"named": true
-				},
-				{
-					"type": "site_definition",
 					"named": true
 				}
 			]
@@ -499,7 +480,11 @@
 					"named": true
 				},
 				{
-					"type": "sites",
+					"type": "single_site",
+					"named": true
+				},
+				{
+					"type": "site_block",
 					"named": true
 				},
 				{

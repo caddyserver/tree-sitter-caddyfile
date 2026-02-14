@@ -9,13 +9,12 @@ root * /var/www
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(matcher)
-				(argument)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(matcher)
+			(argument))))
 
 =========================================
 Single Site Block with multiple addresses
@@ -26,13 +25,12 @@ http://example.com:8080, https://fake.org:8443, fake.co.uk, {$ENV_SITE}, :{$PORT
 ---
 
 (source_file
-	(sites
-		(single_site
-			(site_address)
-			(site_address)
-			(site_address)
-			(site_address)
-			(site_address))))
+	(single_site
+		(site_address)
+		(site_address)
+		(site_address)
+		(site_address)
+		(site_address)))
 
 =====================================
 Single Site Block with Global Options
@@ -52,13 +50,12 @@ root * /var/www
 	(global_options
 		(directive
 			(directive_name)))
-	(sites
-		(single_site
-			(site_address)
-			(directive
-				(directive_name)
-				(matcher)
-				(argument)))))
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(matcher)
+			(argument))))
 
 =================
 Single Site Block
@@ -71,13 +68,12 @@ example.com {
 ---
 
 (source_file
-	(sites
-		(site_definition
-			(site_address)
-			(block
-				(directive
-					(directive_name)
-					(interpreted_string_literal))))))
+	(site_block
+		(site_address)
+		(block
+			(directive
+				(directive_name)
+				(interpreted_string_literal)))))
 
 ====================
 Multiple Site Blocks
@@ -94,16 +90,15 @@ foobar.com {
 ---
 
 (source_file
-	(sites
-		(site_definition
-			(site_address)
-			(block
-				(directive
-					(directive_name)
-					(interpreted_string_literal))))
-		(site_definition
-			(site_address)
-			(block
-				(directive
-					(directive_name)
-					(interpreted_string_literal))))))
+	(site_block
+		(site_address)
+		(block
+			(directive
+				(directive_name)
+				(interpreted_string_literal))))
+	(site_block
+		(site_address)
+		(block
+			(directive
+				(directive_name)
+				(interpreted_string_literal)))))
