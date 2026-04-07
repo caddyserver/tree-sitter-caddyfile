@@ -29,6 +29,10 @@
 							{
 								"type": "SYMBOL",
 								"name": "named_route"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "import_directive"
 							}
 						]
 					}
@@ -66,6 +70,10 @@
 													{
 														"type": "SYMBOL",
 														"name": "named_route"
+													},
+													{
+														"type": "SYMBOL",
+														"name": "import_directive"
 													}
 												]
 											}
@@ -1474,7 +1482,7 @@
 			"members": [
 				{
 					"type": "PATTERN",
-					"value": "[a-zA-Z\\-_+.\\\\\\/*:$0-9]([a-zA-Z\\-_+.\\\\\\/*:$0-9@]*)"
+					"value": "\\??[a-zA-Z\\-_+.\\\\\\/*:$0-9]([a-zA-Z\\-_+.\\\\\\/*:$0-9@]*)"
 				},
 				{
 					"type": "PATTERN",
@@ -1625,9 +1633,53 @@
 				]
 			}
 		},
+		"import_directive": {
+			"type": "SEQ",
+			"members": [
+				{
+					"type": "STRING",
+					"value": "import"
+				},
+				{
+					"type": "REPEAT1",
+					"content": {
+						"type": "CHOICE",
+						"members": [
+							{
+								"type": "SYMBOL",
+								"name": "environment_variable"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "placeholder"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "path"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "_string_literal"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "argument"
+							}
+						]
+					}
+				},
+				{
+					"type": "IMMEDIATE_TOKEN",
+					"content": {
+						"type": "PATTERN",
+						"value": "\\r?\\n|\\r"
+					}
+				}
+			]
+		},
 		"directive_name": {
 			"type": "PATTERN",
-			"value": "[a-zA-Z_\\-+]+"
+			"value": "\\??[a-zA-Z_\\-+]+"
 		},
 		"directive": {
 			"type": "SEQ",
@@ -2079,6 +2131,84 @@
 				}
 			]
 		},
+		"unnamed_directive": {
+			"type": "SEQ",
+			"members": [
+				{
+					"type": "CHOICE",
+					"members": [
+						{
+							"type": "SYMBOL",
+							"name": "_string_literal"
+						},
+						{
+							"type": "SYMBOL",
+							"name": "path"
+						}
+					]
+				},
+				{
+					"type": "REPEAT",
+					"content": {
+						"type": "CHOICE",
+						"members": [
+							{
+								"type": "SYMBOL",
+								"name": "network_address"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "environment_variable"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "placeholder"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "_string_literal"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "duration_literal"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "int_literal"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "status_code_fallback"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "argument"
+							},
+							{
+								"type": "SYMBOL",
+								"name": "heredoc"
+							}
+						]
+					}
+				},
+				{
+					"type": "CHOICE",
+					"members": [
+						{
+							"type": "SYMBOL",
+							"name": "block"
+						},
+						{
+							"type": "IMMEDIATE_TOKEN",
+							"content": {
+								"type": "PATTERN",
+								"value": "\\r?\\n|\\r"
+							}
+						}
+					]
+				}
+			]
+		},
 		"_definition": {
 			"type": "CHOICE",
 			"members": [
@@ -2089,6 +2219,10 @@
 				{
 					"type": "SYMBOL",
 					"name": "named_matcher"
+				},
+				{
+					"type": "SYMBOL",
+					"name": "unnamed_directive"
 				}
 			]
 		},
