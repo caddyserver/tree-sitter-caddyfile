@@ -244,11 +244,14 @@ module.exports = grammar({
 		// Comment is available at the start (or during) a line that contains a # with preceding whitespace
 		comment: _ => token(seq('#', /.*/)),
 
-		// Argument is pretty much anything that isn't a matcher
+		// Argument is pretty much anything that isn't a matcher. Regex
+		// metacharacters `()[]|?^` are allowed so that `path_regexp`-style
+		// arguments like `/foo/(bar|baz).*` or `/foo/[0-9]+` lex as a single
+		// argument token rather than producing an ERROR node.
 		argument: _ =>
 			choice(
 				// Normal arguments without @ or starting with non-@ characters
-				/[a-zA-Z\-_+.\\\/*:$0-9]([a-zA-Z\-_+.\\\/*:$0-9@]*)/,
+				/[a-zA-Z\-_+.\\\/*:$0-9(\[?|^][a-zA-Z\-_+.\\\/*:$0-9@()\[\]?|^]*/,
 
 				// Arguments starting with @ that contain more @ characters
 				// (like @longhorn-ui@/share/share/lib/longhorn-ui)
