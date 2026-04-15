@@ -156,3 +156,43 @@ reverse_proxy @private 127.0.0.1
 				(matcher_identifier
 					name: (matcher_name)))
 			(network_address))))
+
+========================
+path_regexp with Regex
+========================
+
+example.com
+
+@alpha path_regexp /foo/(bar|baz).*
+@beta path_regexp /foo/[0-9]+
+@gamma path_regexp ^/path/([a-z]+)/end$
+
+file_server
+
+---
+
+(source_file
+	(single_site
+		name: (site_address)
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				name: (matcher_directive_name)
+				(path)
+				(argument)))
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				name: (matcher_directive_name)
+				(path)
+				(argument)))
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				name: (matcher_directive_name)
+				(argument)))
+		body: (directive
+			name: (directive_name))))
