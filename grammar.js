@@ -193,7 +193,11 @@ module.exports = grammar({
 				// `:{$ENV_VAR}`
 				seq(optional(':'), $._environment_variable),
 
-				// Environment variable.
+				// Environment variable with explicit port suffix.
+				// Very common pattern: `{$DOMAIN}:443`, `{$APP}:8080`, etc.
+				seq($._environment_variable, token.immediate(seq(':', PORT_REGEX))),
+
+				// Environment variable (bare).
 				//
 				// According to the Caddy docs, placeholders cannot be used in addresses,
 				// but you can use environment variables. `{$ENV_VAR}`, not `{env.ENV_VAR}`
