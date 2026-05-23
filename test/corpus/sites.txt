@@ -102,3 +102,20 @@ foobar.com {
 			(directive
 				(directive_name)
 				(interpreted_string_literal)))))
+
+======================================
+Environment Variable with Port Suffix
+======================================
+
+{$DOMAIN}:443
+
+reverse_proxy backend:80
+
+---
+
+(source_file
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(network_address))))
