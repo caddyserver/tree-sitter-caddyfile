@@ -19,6 +19,10 @@
 					{
 						"type": "named_matcher",
 						"named": true
+					},
+					{
+						"type": "unnamed_directive",
+						"named": true
 					}
 				]
 			}
@@ -153,6 +157,41 @@
 					}
 				]
 			}
+		}
+	},
+	{
+		"type": "import_directive",
+		"named": true,
+		"fields": {},
+		"children": {
+			"multiple": true,
+			"required": true,
+			"types": [
+				{
+					"type": "argument",
+					"named": true
+				},
+				{
+					"type": "environment_variable",
+					"named": true
+				},
+				{
+					"type": "interpreted_string_literal",
+					"named": true
+				},
+				{
+					"type": "path",
+					"named": true
+				},
+				{
+					"type": "placeholder",
+					"named": true
+				},
+				{
+					"type": "raw_string_literal",
+					"named": true
+				}
+			]
 		}
 	},
 	{
@@ -390,6 +429,10 @@
 					{
 						"type": "named_matcher",
 						"named": true
+					},
+					{
+						"type": "unnamed_directive",
+						"named": true
 					}
 				]
 			},
@@ -476,6 +519,10 @@
 					"named": true
 				},
 				{
+					"type": "import_directive",
+					"named": true
+				},
+				{
 					"type": "named_route",
 					"named": true
 				},
@@ -489,6 +536,65 @@
 				},
 				{
 					"type": "snippet_definition",
+					"named": true
+				}
+			]
+		}
+	},
+	{
+		"type": "unnamed_directive",
+		"named": true,
+		"fields": {},
+		"children": {
+			"multiple": true,
+			"required": true,
+			"types": [
+				{
+					"type": "argument",
+					"named": true
+				},
+				{
+					"type": "block",
+					"named": true
+				},
+				{
+					"type": "duration_literal",
+					"named": true
+				},
+				{
+					"type": "environment_variable",
+					"named": true
+				},
+				{
+					"type": "heredoc",
+					"named": true
+				},
+				{
+					"type": "int_literal",
+					"named": true
+				},
+				{
+					"type": "interpreted_string_literal",
+					"named": true
+				},
+				{
+					"type": "network_address",
+					"named": true
+				},
+				{
+					"type": "path",
+					"named": true
+				},
+				{
+					"type": "placeholder",
+					"named": true
+				},
+				{
+					"type": "raw_string_literal",
+					"named": true
+				},
+				{
+					"type": "status_code_fallback",
 					"named": true
 				}
 			]
@@ -557,6 +663,10 @@
 	},
 	{
 		"type": "https://",
+		"named": false
+	},
+	{
+		"type": "import",
 		"named": false
 	},
 	{

@@ -95,13 +95,13 @@ module.exports = grammar({
 				// Allow a single "global options" block at the beginning of the file.
 				optional($.global_options),
 
-				// Allow any snippet definitions and/or named routes before any
-				// site block has been declared.
-				repeat(choice($.snippet_definition, $.named_route)),
+				// Allow any snippet definitions, named routes, and top-level
+				// import directives before any site block has been declared.
+				repeat(choice($.snippet_definition, $.named_route, $.import_directive)),
 
-				// Once a single site is started, snippets, named routes, and
-				// other site blocks can no longer be declared.
-				optional(choice($.single_site, seq($.site_block, repeat(choice($.site_block, $.snippet_definition, $.named_route))))),
+				// Once a single site is started, snippets, named routes,
+				// import directives, and other site blocks can be declared.
+				optional(choice($.single_site, seq($.site_block, repeat(choice($.site_block, $.snippet_definition, $.named_route, $.import_directive))))),
 			),
 
 		// Global options is a special block that only allows the use of directives.
@@ -248,7 +248,8 @@ module.exports = grammar({
 		argument: _ =>
 			choice(
 				// Normal arguments without @ or starting with non-@ characters
-				/[a-zA-Z\-_+.\\\/*:$0-9]([a-zA-Z\-_+.\\\/*:$0-9@]*)/,
+				// Allows ? prefix for Caddy's header directive syntax (?Header-Name)
+				/\??[a-zA-Z\-_+.\\\/*:$0-9]([a-zA-Z\-_+.\\\/*:$0-9@]*)/,
 
 				// Arguments starting with @ that contain more @ characters
 				// (like @longhorn-ui@/share/share/lib/longhorn-ui)
@@ -282,8 +283,24 @@ module.exports = grammar({
 		environment_variable: $ => $._environment_variable,
 		_environment_variable: _ => environmentVariable,
 
+		// Top-level import directive (import can appear anywhere in Caddyfile,
+		// including between site blocks at the top level).
+		import_directive: $ => seq(
+			'import',
+			repeat1(
+				choice(
+					$.environment_variable,
+					$.placeholder,
+					$.path,
+					$._string_literal,
+					$.argument,
+				),
+			),
+			token.immediate(NEW_LINE_REGEX),
+		),
+
 		// Directives
-		directive_name: _ => /[a-zA-Z_\-+]+/,
+		directive_name: _ => /\??[a-zA-Z_\-+]+/,
 		directive: $ => seq(field('name', $.directive_name), ...directiveFields($)),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#path-matchers
@@ -359,7 +376,15 @@ module.exports = grammar({
 		// Sites
 		//
 
-		_definition: $ => choice($.directive, $.named_matcher),
+		// Unnamed directives handle lines in blocks that start with a string
+		// literal instead of a directive name. This is common in plugin config
+		// blocks (e.g. `links { "Label" "/path" icon "class" }`).
+		unnamed_directive: $ => seq(
+			choice($._string_literal, $.path),
+			...subdirectiveFields($),
+		),
+
+		_definition: $ => choice($.directive, $.named_matcher, $.unnamed_directive),
 
 		// Block is a site block that is allowed to define directives and named matchers.
 		block: $ => seq('{', token.immediate(NEW_LINE_REGEX), field('body', repeat($._definition)), '}'),
