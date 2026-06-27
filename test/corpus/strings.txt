@@ -122,3 +122,20 @@ exec wakeonlan 78:f4:53:67:7a:a9 {
 			(block
 				(directive
 					(directive_name))))))
+
+===============
+Complex Headers
+===============
+
+example.com
+
+header ?Content-Type
+
+---
+
+(source_file
+	(single_site
+		(site_address)
+		(directive
+			(directive_name)
+			(argument))))
