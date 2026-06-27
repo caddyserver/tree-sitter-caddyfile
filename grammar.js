@@ -247,17 +247,6 @@ module.exports = grammar({
 		// Comment is available at the start (or during) a line that contains a # with preceding whitespace
 		comment: _ => token(seq('#', /.*/)),
 
-		// Argument is pretty much anything that isn't a matcher
-		argument: _ =>
-			choice(
-				// Normal arguments without @ or starting with non-@ characters
-				/[a-zA-Z\-_+.\\\/*:$0-9]([a-zA-Z\-_+.\\\/*:$0-9@]*)/,
-
-				// Arguments starting with @ that contain more @ characters
-				// (like @longhorn-ui@/share/share/lib/longhorn-ui)
-				/@[a-zA-Z\-_+.\\\/*:$0-9]*@[a-zA-Z\-_+.\\\/*:$0-9@]*/,
-			),
-
 		// Fallback status code, primarily used with `try_files` as the last argument.
 		status_code_fallback: _ => token(seq('=', /[0-9]{3}/)),
 
@@ -290,12 +279,25 @@ module.exports = grammar({
 		directive: $ => seq(field('name', $.directive_name), ...directiveFields($)),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#path-matchers
-		path: _ => token(prec(2, seq(choice('/', '\\'), /([a-zA-Z0-9\-_%\\\/.]+)*(\*)?/))),
+		path: _ => token(seq(choice('/', '\\'), /([a-zA-Z0-9\-_%\\\/.]+)*(\*)?/)),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#named-matchers
 		matcher_name: _ => /[a-zA-Z0-9\-_]+/,
 		matcher_identifier: $ => seq('@', field('name', $.matcher_name)),
 		// matcher_identifier: _ => token(prec(1, seq('@', field('name', /[a-zA-Z0-9\-_]+/)))),
+
+		// Argument is pretty much anything that isn't a matcher
+		argument: _ =>
+			token(
+				choice(
+					// Normal arguments, cannot start with `@` but may contain them later.
+					/[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]?+*][a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]?+*\{\}]*/,
+
+					// Arguments that start with an `@` but contain one later.
+					// Example: `@longhorn-ui@/share/share/lib/longhorn-ui`
+					seq('@', /[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]?+*]*@[a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]?+*\{\}]*/),
+				),
+			),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#expression
 		_bare_cel_expression: $ => repeat1($._bare_cel_expression_content),

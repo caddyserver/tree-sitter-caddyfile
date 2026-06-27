@@ -1494,19 +1494,6 @@
 				]
 			}
 		},
-		"argument": {
-			"type": "CHOICE",
-			"members": [
-				{
-					"type": "PATTERN",
-					"value": "[a-zA-Z\\-_+.\\\\\\/*:$0-9]([a-zA-Z\\-_+.\\\\\\/*:$0-9@]*)"
-				},
-				{
-					"type": "PATTERN",
-					"value": "@[a-zA-Z\\-_+.\\\\\\/*:$0-9]*@[a-zA-Z\\-_+.\\\\\\/*:$0-9@]*"
-				}
-			]
-		},
 		"status_code_fallback": {
 			"type": "TOKEN",
 			"content": {
@@ -1742,30 +1729,26 @@
 		"path": {
 			"type": "TOKEN",
 			"content": {
-				"type": "PREC",
-				"value": 2,
-				"content": {
-					"type": "SEQ",
-					"members": [
-						{
-							"type": "CHOICE",
-							"members": [
-								{
-									"type": "STRING",
-									"value": "/"
-								},
-								{
-									"type": "STRING",
-									"value": "\\"
-								}
-							]
-						},
-						{
-							"type": "PATTERN",
-							"value": "([a-zA-Z0-9\\-_%\\\\\\/.]+)*(\\*)?"
-						}
-					]
-				}
+				"type": "SEQ",
+				"members": [
+					{
+						"type": "CHOICE",
+						"members": [
+							{
+								"type": "STRING",
+								"value": "/"
+							},
+							{
+								"type": "STRING",
+								"value": "\\"
+							}
+						]
+					},
+					{
+						"type": "PATTERN",
+						"value": "([a-zA-Z0-9\\-_%\\\\\\/.]+)*(\\*)?"
+					}
+				]
 			}
 		},
 		"matcher_name": {
@@ -1788,6 +1771,31 @@
 					}
 				}
 			]
+		},
+		"argument": {
+			"type": "TOKEN",
+			"content": {
+				"type": "CHOICE",
+				"members": [
+					{
+						"type": "PATTERN",
+						"value": "[\\^a-zA-Z\\-_%+.\\\\\\/*:$0-9|\\(\\)\\[\\]?+*][a-zA-Z\\-_%+.\\\\\\/*:$0-9@|\\(\\)\\[\\]?+*\\{\\}]*"
+					},
+					{
+						"type": "SEQ",
+						"members": [
+							{
+								"type": "STRING",
+								"value": "@"
+							},
+							{
+								"type": "PATTERN",
+								"value": "[\\^a-zA-Z\\-_%+.\\\\\\/*:$0-9|\\(\\)\\[\\]?+*]*@[a-zA-Z\\-_%+.\\\\\\/*:$0-9@|\\(\\)\\[\\]?+*\\{\\}]*"
+							}
+						]
+					}
+				]
+			}
 		},
 		"_bare_cel_expression": {
 			"type": "REPEAT1",
