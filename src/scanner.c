@@ -95,7 +95,15 @@ static bool scan_heredoc_body(Scanner *scanner, TSLexer *lexer)
 	// Check if we're at the potential end delimiter
 	bool is_start_of_line = lexer->get_column(lexer) == 0;
 	if (is_start_of_line) {
-		// Try to match the delimiter at the beginning of the line
+		// Skip leading whitespace to check for indented end marker
+		int32_t saved_lookahead = lexer->lookahead;
+		int whitespace_count = 0;
+		while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+			advance(lexer);
+			whitespace_count++;
+		}
+
+		// Try to match the delimiter after whitespace
 		bool is_delimiter = true;
 		int i;
 
@@ -106,7 +114,7 @@ static bool scan_heredoc_body(Scanner *scanner, TSLexer *lexer)
 			}
 
 			// Peek at the next character
-			lexer->advance(lexer, false);
+			advance(lexer);
 		}
 
 		// Check if this is the end delimiter (must be followed by newline or
@@ -115,12 +123,9 @@ static bool scan_heredoc_body(Scanner *scanner, TSLexer *lexer)
 			(lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
 			 lexer->lookahead == 0)) {
 			// This is the end delimiter - we should handle this in
-			// scan_heredoc_end So we need to backtrack and return false
-			for (int j = 0; j < i; j++) {
-				// Since we can't reset, we have to mark this as invalid
-				// and let the scanner try again for heredoc_end
-				lexer->mark_end(lexer);
-			}
+			// scan_heredoc_end. Mark end and return false so the scanner
+			// can try heredoc_end on the next iteration.
+			lexer->mark_end(lexer);
 			return false;
 		}
 
@@ -161,6 +166,10 @@ static bool scan_heredoc_end(Scanner *scanner, TSLexer *lexer)
 	// Must be at the start of a line
 	if (lexer->get_column(lexer) != 0)
 		return false;
+
+	// Skip leading whitespace (supports indented end markers)
+	while (lexer->lookahead == ' ' || lexer->lookahead == '\t')
+		advance(lexer);
 
 	// Check if this line matches the delimiter exactly
 	for (int i = 0; i < scanner->delimiter_len; i++) {
