@@ -42,7 +42,8 @@
 
 # Nix
 .direnv
-result*
+result
+result-*
 
 # Rust artifacts
 target/
