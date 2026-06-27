@@ -1104,6 +1104,31 @@
 					]
 				},
 				{
+					"type": "SEQ",
+					"members": [
+						{
+							"type": "SYMBOL",
+							"name": "_environment_variable"
+						},
+						{
+							"type": "IMMEDIATE_TOKEN",
+							"content": {
+								"type": "SEQ",
+								"members": [
+									{
+										"type": "STRING",
+										"value": ":"
+									},
+									{
+										"type": "PATTERN",
+										"value": "[0-9]{1,5}"
+									}
+								]
+							}
+						}
+					]
+				},
+				{
 					"type": "SYMBOL",
 					"name": "_environment_variable"
 				},
