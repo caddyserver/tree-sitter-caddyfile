@@ -31,18 +31,24 @@
       }: {
         _module.args.pkgs = import inputs.nixpkgs {inherit system;};
 
-        devShells.default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            cargo
-            emscripten
-            gcc
-            go
-            nodejs_22
-            nodejs_22.pkgs.node-gyp
-            python3
-            rustc
-          ];
-        };
+        devShells.default = pkgs.mkShell (let
+          nodejs = pkgs.nodejs_22;
+        in {
+          packages =
+            [
+              nodejs
+              (pkgs.node-gyp.override {inherit nodejs;})
+            ]
+            ++ (with pkgs; [
+              gcc
+              cargo
+              emscripten
+              gcc
+              go
+              python3
+              rustc
+            ]);
+        });
 
         treefmt = {
           projectRootFile = "flake.nix";
