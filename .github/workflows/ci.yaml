@@ -3,22 +3,22 @@ name: CI
 on:
   push:
     branches: [master]
-    paths:
-      - bindings/**
-      - binding.gyp
-      - examples/**
-      - src/**
-      - test/**
-      - grammar.js
+    # paths:
+    #   - bindings/**
+    #   - binding.gyp
+    #   - examples/**
+    #   - src/**
+    #   - test/**
+    #   - grammar.js
   pull_request:
     branches: [master]
-    paths:
-      - bindings/**
-      - binding.gyp
-      - examples/**
-      - src/**
-      - test/**
-      - grammar.js
+    # paths:
+    #   - bindings/**
+    #   - binding.gyp
+    #   - examples/**
+    #   - src/**
+    #   - test/**
+    #   - grammar.js
 
 jobs:
   tests:
