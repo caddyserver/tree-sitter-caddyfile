@@ -51,5 +51,8 @@
 		"test": "node --test bindings/node/*_test.js",
 		"generate": "tree-sitter generate",
 		"build": "tree-sitter build"
+	},
+	"engines": {
+		"node": ">=22.0.0 <23.0.0"
 	}
 }
