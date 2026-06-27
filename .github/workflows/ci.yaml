@@ -42,17 +42,17 @@ jobs:
           cache: npm
 
       - name: Setup tree-sitter
-        uses: tree-sitter/setup-action/cli@eeb902ac2f1be576edc296309872cf476a209b7f # v2
+        uses: ./.github/actions/tree-sitter-cli
 
       - name: Run tests
         uses: tree-sitter/parser-test-action@e9b2fecb014a7f8caa1a47316450d4e665132ed9 # v2
         with:
+          node-version: '22'
           test-go: true
           test-node: true
           test-python: true
           test-rust: true
-          # TODO: enable once https://github.com/swift-actions/setup-swift/issues/694 is fixed.
-          test-swift: false
+          test-swift: true
 
       - name: Parse examples
         uses: tree-sitter/parse-action@f44ffa94f802024f27e821a72e6f2f3efc5dd521 # v4
