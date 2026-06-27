@@ -47,6 +47,7 @@
               go
               python3
               rustc
+              tree-sitter
             ]);
         });
 
