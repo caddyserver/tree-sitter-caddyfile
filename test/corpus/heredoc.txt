@@ -27,7 +27,7 @@ Heredoc in Site-block
 example.com {
 	respond <<EOF
 		Hello, world
-EOF
+EOF 200
 }
 
 ---
@@ -41,7 +41,8 @@ EOF
 				(heredoc
 					identifier: (heredoc_start)
 					value: (heredoc_body)
-					end_tag: (heredoc_end))))))
+					end_tag: (heredoc_end))
+				(int_literal)))))
 
 ==============================
 Heredoc in Site-block Indented
@@ -50,7 +51,7 @@ Heredoc in Site-block Indented
 example.com {
 	respond <<EOF
 		Hello, world
-	EOF
+	EOF 200
 }
 
 ---
@@ -64,4 +65,5 @@ example.com {
 				(heredoc
 					identifier: (heredoc_start)
 					value: (heredoc_body)
-					end_tag: (heredoc_end))))))
+					end_tag: (heredoc_end))
+				(int_literal)))))

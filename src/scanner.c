@@ -167,27 +167,28 @@ static bool scan_heredoc_end(Scanner *scanner, TSLexer *lexer)
 	if (lexer->get_column(lexer) != 0)
 		return false;
 
-	// Skip leading whitespace (supports indented end markers)
+	// Skip leading whitespace (supports indented end markers).
 	while (lexer->lookahead == ' ' || lexer->lookahead == '\t')
 		advance(lexer);
 
-	// Check if this line matches the delimiter exactly
+	// Check if this line matches the delimiter.
 	for (int i = 0; i < scanner->delimiter_len; i++) {
 		if (lexer->lookahead != scanner->delimiter[i])
 			return false;
+
 		advance(lexer);
 	}
 
-	// Should be end of line or file after delimiter
-	if (lexer->lookahead != '\n' && lexer->lookahead != 0 &&
-		lexer->lookahead != '\r')
-		return false;
-
-	// Mark the end before advancing past newline
+	// Mark the end right after the delimiter, any content after the delimiter
+	// like a status code for example will remain for the grammar to handle.
 	lexer->mark_end(lexer);
 
-	if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
-		advance(lexer);
+	// Only consume newline if it's immediately after the delimiter.
+	// If there's other content, leave it for the grammar to handle.
+	if (lexer->lookahead == '\n' || lexer->lookahead == '\r' ||
+		lexer->lookahead == 0) {
+		if (lexer->lookahead == '\n' || lexer->lookahead == '\r')
+			advance(lexer);
 	}
 
 	scanner->has_heredoc = false;
