@@ -207,3 +207,50 @@ file_server
 				expression: (cel_expression)))
 		body: (directive
 			name: (directive_name))))
+
+=========================================================
+path_regexp with Regex does not break subsequent parsing
+=========================================================
+
+handle_path /working {
+	file_server
+}
+
+@broken path_regexp /foo/(bar|baz).*
+@also-broken path_regexp /foo/[0-9]+
+
+handle /xyz {
+	file_server
+}
+
+---
+
+(source_file
+	(single_site
+		name: (site_address)
+		body: (directive
+			name: (directive_name)
+			(matcher
+				(path_matcher))
+			(block
+				body: (directive
+					name: (directive_name))))
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				name: (matcher_directive_name)
+				(argument)))
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				name: (matcher_directive_name)
+				(argument)))
+		body: (directive
+			name: (directive_name)
+			(matcher
+				(path_matcher))
+			(block
+				body: (directive
+					name: (directive_name))))))

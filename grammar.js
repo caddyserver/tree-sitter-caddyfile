@@ -193,6 +193,9 @@ module.exports = grammar({
 				// `:{$ENV_VAR}`
 				seq(optional(':'), $._environment_variable),
 
+				// `{$ENV_VAR}:PORT`
+				seq($._environment_variable, token.immediate(seq(':', PORT_REGEX))),
+
 				// Environment variable.
 				//
 				// According to the Caddy docs, placeholders cannot be used in addresses,
@@ -244,16 +247,25 @@ module.exports = grammar({
 		// Comment is available at the start (or during) a line that contains a # with preceding whitespace
 		comment: _ => token(seq('#', /.*/)),
 
-		// Argument is pretty much anything that isn't a matcher
+		// Argument is pretty much anything that isn't a matcher.
+		//
+		// NOTE: `{` and `}` are only allowed as *continuation* characters (i.e.
+		// they cannot start an argument) so the lexer never mistakes a block's
+		// opening brace for the start of a new argument, while still allowing
+		// them to appear later in an argument (e.g. a `path_regexp` pattern like
+		// `\.([a-f0-9]{6})\.(css|js)$`). Since a block's `{` is always preceded
+		// by whitespace in valid Caddyfiles, `argument` naturally stops before it.
 		argument: _ =>
 			choice(
 				// Normal arguments without @ or starting with non-@ characters
 				// Allows ? prefix for Caddy's header directive syntax (?Header-Name)
-				/\??[a-zA-Z\-_+.\\\/*:$0-9]([a-zA-Z\-_+.\\\/*:$0-9@]*)/,
+				// Also allows regular-expression punctuation (`^ % | ( ) [ ]`) so
+				// matcher arguments like `/foo/(bar|baz).*` or `/foo/[0-9]+` lex correctly.
+				/\??[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]]([\^a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]\{\}]*)/,
 
 				// Arguments starting with @ that contain more @ characters
 				// (like @longhorn-ui@/share/share/lib/longhorn-ui)
-				/@[a-zA-Z\-_+.\\\/*:$0-9]*@[a-zA-Z\-_+.\\\/*:$0-9@]*/,
+				/@[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]]*@[\^a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]\{\}]*/,
 			),
 
 		// Fallback status code, primarily used with `try_files` as the last argument.
@@ -304,6 +316,15 @@ module.exports = grammar({
 		directive: $ => seq(field('name', $.directive_name), ...directiveFields($)),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#path-matchers
+		//
+		// This is given a higher lexical precedence than `argument` so that it
+		// wins the (typically equal-length) tie against `argument` when used as
+		// a directive's leading matcher (e.g. `reverse_proxy /path 127.0.0.1`).
+		// It must NOT be used anywhere alongside `argument` where a longer
+		// `argument` match is possible (such as inside `matcher_directive`
+		// fields), since lexical precedence always wins over match length and
+		// would wrongly truncate longer arguments (e.g. regular expressions
+		// like `/foo/(bar|baz).*` used with `path_regexp`).
 		path: _ => token(prec(2, seq(choice('/', '\\'), /([a-zA-Z0-9\-_%\\\/.]+)*(\*)?/))),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#named-matchers
@@ -343,7 +364,11 @@ module.exports = grammar({
 									$.network_address,
 									$.environment_variable,
 									$.placeholder,
-									$.path,
+									// NOTE: `$.path` is intentionally NOT included here. It carries a
+									// higher lexical precedence than `$.argument` (see its definition),
+									// which would cause it to win over a longer `$.argument` match, such
+									// as a `path_regexp` matcher's regular-expression argument (e.g.
+									// `/foo/(bar|baz).*`). `$.argument` already matches plain paths fine.
 									$._string_literal,
 									$.duration_literal,
 									$.int_literal,
@@ -403,12 +428,21 @@ module.exports = grammar({
 });
 
 /**
- * Creates a rule to match one or more of the rules separated by a comma
+ * Creates a rule to match one or more of the rules separated by a comma.
+ *
+ * The comma may be followed by inline whitespace, or by a single line break
+ * (with optional leading/trailing whitespace) so that site address lists can
+ * be split across multiple lines, e.g.:
+ *
+ *   example.com,
+ *   example.org {
+ *   	...
+ *   }
  *
  * @param {Rule} rule
  *
  * @returns {SeqRule}
  */
 function commaSep1(rule) {
-	return seq(rule, repeat(seq(token.immediate(/, /), rule)));
+	return seq(rule, repeat(seq(token.immediate(/,[ \t]*\r?\n?[ \t]*/), rule)));
 }
