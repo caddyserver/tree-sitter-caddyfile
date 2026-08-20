@@ -39,7 +39,7 @@ jobs:
         uses: ./.github/actions/tree-sitter-cli
 
       - name: Run tests
-        uses: tree-sitter/parser-test-action@e9b2fecb014a7f8caa1a47316450d4e665132ed9 # v2
+        uses: tree-sitter/parser-test-action@11f45ba658616c8882ecd2bf0fb12a7defd796e4 # v2
         with:
           node-version: '22'
           test-go: true
