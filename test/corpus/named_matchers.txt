@@ -167,6 +167,7 @@ example.com
 @numeric path_regexp /foo/[0-9]+
 @regex path_regexp ^/path/([a-z]+)/end$
 @static path_regexp \.([a-f0-9]{6})\.(css|js)$
+@quantified path_regexp ^/_nd-share/([A-Za-z0-9_-]{1,128})/?$
 @static_cel `path_regexp('\.([a-f0-9]{6})\.(css|js)$') && file()`
 
 file_server
@@ -176,6 +177,12 @@ file_server
 (source_file
 	(single_site
 		name: (site_address)
+		body: (named_matcher
+			(matcher_identifier
+				name: (matcher_name))
+			(matcher_directive
+				name: (matcher_directive_name)
+				(argument)))
 		body: (named_matcher
 			(matcher_identifier
 				name: (matcher_name))
