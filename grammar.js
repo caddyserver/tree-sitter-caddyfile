@@ -95,13 +95,13 @@ module.exports = grammar({
 				// Allow a single "global options" block at the beginning of the file.
 				optional($.global_options),
 
-				// Allow any snippet definitions and/or named routes before any
-				// site block has been declared.
-				repeat(choice($.snippet_definition, $.named_route)),
+				// Allow any snippet definitions, named routes, and top-level
+				// import directives before any site block has been declared.
+				repeat(choice($.snippet_definition, $.named_route, $.import_directive)),
 
-				// Once a single site is started, snippets, named routes, and
-				// other site blocks can no longer be declared.
-				optional(choice($.single_site, seq($.site_block, repeat(choice($.site_block, $.snippet_definition, $.named_route))))),
+				// Once a single site is started, snippets, named routes,
+				// import directives, and other site blocks can be declared.
+				optional(choice($.single_site, seq($.site_block, repeat(choice($.site_block, $.snippet_definition, $.named_route, $.import_directive))))),
 			),
 
 		// Global options is a special block that only allows the use of directives.
@@ -247,6 +247,27 @@ module.exports = grammar({
 		// Comment is available at the start (or during) a line that contains a # with preceding whitespace
 		comment: _ => token(seq('#', /.*/)),
 
+		// Argument is pretty much anything that isn't a matcher.
+		//
+		// NOTE: `{` and `}` are only allowed as *continuation* characters (i.e.
+		// they cannot start an argument) so the lexer never mistakes a block's
+		// opening brace for the start of a new argument, while still allowing
+		// them to appear later in an argument (e.g. a `path_regexp` pattern like
+		// `\.([a-f0-9]{6})\.(css|js)$`). Since a block's `{` is always preceded
+		// by whitespace in valid Caddyfiles, `argument` naturally stops before it.
+		argument: _ =>
+			choice(
+				// Normal arguments without @ or starting with non-@ characters
+				// Allows ? prefix for Caddy's header directive syntax (?Header-Name)
+				// Also allows regular-expression punctuation (`^ % | ( ) [ ]`) so
+				// matcher arguments like `/foo/(bar|baz).*` or `/foo/[0-9]+` lex correctly.
+				/\??[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]]([\^a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]\{\}]*)/,
+
+				// Arguments starting with @ that contain more @ characters
+				// (like @longhorn-ui@/share/share/lib/longhorn-ui)
+				/@[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]]*@[\^a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]\{\}]*/,
+			),
+
 		// Fallback status code, primarily used with `try_files` as the last argument.
 		status_code_fallback: _ => token(seq('=', /[0-9]{3}/)),
 
@@ -274,30 +295,42 @@ module.exports = grammar({
 		environment_variable: $ => $._environment_variable,
 		_environment_variable: _ => environmentVariable,
 
+		// Top-level import directive (import can appear anywhere in Caddyfile,
+		// including between site blocks at the top level).
+		import_directive: $ => seq(
+			'import',
+			repeat1(
+				choice(
+					$.environment_variable,
+					$.placeholder,
+					$.path,
+					$._string_literal,
+					$.argument,
+				),
+			),
+			token.immediate(NEW_LINE_REGEX),
+		),
+
 		// Directives
-		directive_name: _ => /[a-zA-Z_\-+]+/,
+		directive_name: _ => /\??[a-zA-Z_\-+]+/,
 		directive: $ => seq(field('name', $.directive_name), ...directiveFields($)),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#path-matchers
-		path: _ => token(seq(choice('/', '\\'), /([a-zA-Z0-9\-_%\\\/.]+)*(\*)?/)),
+		//
+		// This is given a higher lexical precedence than `argument` so that it
+		// wins the (typically equal-length) tie against `argument` when used as
+		// a directive's leading matcher (e.g. `reverse_proxy /path 127.0.0.1`).
+		// It must NOT be used anywhere alongside `argument` where a longer
+		// `argument` match is possible (such as inside `matcher_directive`
+		// fields), since lexical precedence always wins over match length and
+		// would wrongly truncate longer arguments (e.g. regular expressions
+		// like `/foo/(bar|baz).*` used with `path_regexp`).
+		path: _ => token(prec(2, seq(choice('/', '\\'), /([a-zA-Z0-9\-_%\\\/.]+)*(\*)?/))),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#named-matchers
 		matcher_name: _ => /[a-zA-Z0-9\-_]+/,
 		matcher_identifier: $ => seq('@', field('name', $.matcher_name)),
 		// matcher_identifier: _ => token(prec(1, seq('@', field('name', /[a-zA-Z0-9\-_]+/)))),
-
-		// Argument is pretty much anything that isn't a matcher
-		argument: _ =>
-			token(
-				choice(
-					// Normal arguments, cannot start with `@` but may contain them later.
-					/[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]?+*][a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]?+*\{\}]*/,
-
-					// Arguments that start with an `@` but contain one later.
-					// Example: `@longhorn-ui@/share/share/lib/longhorn-ui`
-					seq('@', /[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]?+*]*@[a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]?+*\{\}]*/),
-				),
-			),
 
 		// https://caddyserver.com/docs/caddyfile/matchers#expression
 		_bare_cel_expression: $ => repeat1($._bare_cel_expression_content),
@@ -331,7 +364,11 @@ module.exports = grammar({
 									$.network_address,
 									$.environment_variable,
 									$.placeholder,
-									$.path,
+									// NOTE: `$.path` is intentionally NOT included here. It carries a
+									// higher lexical precedence than `$.argument` (see its definition),
+									// which would cause it to win over a longer `$.argument` match, such
+									// as a `path_regexp` matcher's regular-expression argument (e.g.
+									// `/foo/(bar|baz).*`). `$.argument` already matches plain paths fine.
 									$._string_literal,
 									$.duration_literal,
 									$.int_literal,
@@ -364,7 +401,15 @@ module.exports = grammar({
 		// Sites
 		//
 
-		_definition: $ => choice($.directive, $.named_matcher),
+		// Unnamed directives handle lines in blocks that start with a string
+		// literal instead of a directive name. This is common in plugin config
+		// blocks (e.g. `links { "Label" "/path" icon "class" }`).
+		unnamed_directive: $ => seq(
+			choice($._string_literal, $.path),
+			...subdirectiveFields($),
+		),
+
+		_definition: $ => choice($.directive, $.named_matcher, $.unnamed_directive),
 
 		// Block is a site block that is allowed to define directives and named matchers.
 		block: $ => seq('{', token.immediate(NEW_LINE_REGEX), field('body', repeat($._definition)), '}'),
@@ -383,12 +428,21 @@ module.exports = grammar({
 });
 
 /**
- * Creates a rule to match one or more of the rules separated by a comma
+ * Creates a rule to match one or more of the rules separated by a comma.
+ *
+ * The comma may be followed by inline whitespace, or by a single line break
+ * (with optional leading/trailing whitespace) so that site address lists can
+ * be split across multiple lines, e.g.:
+ *
+ *   example.com,
+ *   example.org {
+ *   	...
+ *   }
  *
  * @param {Rule} rule
  *
  * @returns {SeqRule}
  */
 function commaSep1(rule) {
-	return seq(rule, repeat(seq(token.immediate(/, /), rule)));
+	return seq(rule, repeat(seq(token.immediate(/,[ \t]*\r?\n?[ \t]*/), rule)));
 }
