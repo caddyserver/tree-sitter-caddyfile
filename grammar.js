@@ -291,11 +291,11 @@ module.exports = grammar({
 			token(
 				choice(
 					// Normal arguments, cannot start with `@` but may contain them later.
-					/[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]?+*][a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]?+*\{\}]*/,
+					/[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]?+*,][a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]?+*\{\},]*/,
 
 					// Arguments that start with an `@` but contain one later.
 					// Example: `@longhorn-ui@/share/share/lib/longhorn-ui`
-					seq('@', /[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]?+*]*@[a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]?+*\{\}]*/),
+					seq('@', /[\^a-zA-Z\-_%+.\\\/*:$0-9|\(\)\[\]?+*,]*@[a-zA-Z\-_%+.\\\/*:$0-9@|\(\)\[\]?+*\{\},]*/),
 				),
 			),
 
