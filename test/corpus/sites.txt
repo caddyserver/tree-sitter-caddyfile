@@ -33,6 +33,42 @@ http://example.com:8080, https://fake.org:8443, fake.co.uk, {$ENV_SITE}, :{$PORT
 		(site_address)
 		(site_address)))
 
+==============================================
+Site Block with multiline comma-separated addresses
+==============================================
+
+mysite.com,
+myothersite.com {
+	respond "ok"
+}
+
+example.org {
+	handle /xyz {
+		file_server
+	}
+}
+
+---
+
+(source_file
+	(site_block
+		name: (site_address)
+		name: (site_address)
+		(block
+			body: (directive
+				name: (directive_name)
+				(interpreted_string_literal))))
+	(site_block
+		name: (site_address)
+		(block
+			body: (directive
+				name: (directive_name)
+				(matcher
+					(path_matcher))
+				(block
+					body: (directive
+						name: (directive_name)))))))
+
 =====================================
 Single Site Block with Global Options
 =====================================

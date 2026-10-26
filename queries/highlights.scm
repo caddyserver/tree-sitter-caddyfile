@@ -17,6 +17,7 @@
 ] @keyword
 
 (directive (directive_name) @property)
+(import_directive "import" @property)
 
 ; declaration of a named matcher
 (named_matcher (matcher_identifier (matcher_name)) @function.macro)
