@@ -39,7 +39,7 @@ jobs:
         uses: ./.github/actions/tree-sitter-cli
 
       - name: Run tests
-        uses: tree-sitter/parser-test-action@11f45ba658616c8882ecd2bf0fb12a7defd796e4 # v2
+        uses: tree-sitter/parser-test-action@92e35c06b51ea26c80ffbd3cc8d9286d9110df17 # v2
         with:
           node-version: '22'
           test-go: true
@@ -49,7 +49,7 @@ jobs:
           test-swift: true
 
       - name: Parse examples
-        uses: tree-sitter/parse-action@f44ffa94f802024f27e821a72e6f2f3efc5dd521 # v4
+        uses: tree-sitter/parse-action@47beaa8ba0b5c8b44ef0879b2f647ca7f0a1257d # v5
         with:
           files: |-
             examples/Caddyfile
